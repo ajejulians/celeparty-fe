@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { blogList, BlogListItem } from "../../../lib/blog-data";
 import { BlogCard } from "../../../components/blog/BlogCard";
 import { BlogCardSkeleton } from "../../../components/blog/BlogCardSkeleton";
@@ -14,10 +14,10 @@ export default function BlogListPage() {
   const [state, setState] = useState<FetchState>("loading");
   const [searchQuery, setSearchQuery] = useState("");
 
-  useState(() => {
+  useEffect(() => {
     const timer = setTimeout(() => setState("loaded"), 1200);
     return () => clearTimeout(timer);
-  });
+  }, []);
 
   const filteredBlogs = useMemo(() => {
     if (!searchQuery.trim()) return blogList;

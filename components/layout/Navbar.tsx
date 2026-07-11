@@ -144,6 +144,7 @@ export function Navbar() {
               <Link
                 key={link.name}
                 href={link.path}
+                onClick={() => setMobileOpen(false)}
                 className="font-quick font-bold text-3xl text-white/90 hover:text-c-green hover:translate-x-4 transition-all duration-300 flex items-center justify-between py-4 border-b border-white/5"
                 style={{ transitionDelay: `${i * 50}ms` }}
               >
@@ -156,6 +157,7 @@ export function Navbar() {
           <div className="mt-auto pt-8 pb-12">
             <Link
               href="/auth/login"
+              onClick={() => setMobileOpen(false)}
               className="w-full font-quick font-bold text-lg bg-c-green text-neutral-900 px-6 py-5 rounded-2xl flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_30px_rgba(203,208,2,0.3)]"
             >
               Mulai Sekarang <Sparkles className="w-5 h-5" />
