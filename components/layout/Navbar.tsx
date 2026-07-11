@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Search, Menu, X, ChevronRight, Sparkles } from "lucide-react";
+import { Search, Menu, X, ChevronRight, Sparkles, User, Settings, LogOut, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Dummy login state
   const pathname = usePathname();
   const isLanding = pathname === "/";
 
@@ -39,6 +41,7 @@ export function Navbar() {
   const navLinks = [
     { name: "Beranda", path: "/" },
     { name: "Produk", path: "/products" },
+    { name: "Event", path: "/events" },
     { name: "Vendor", path: "/vendor" },
     { name: "Blog", path: "/blog" },
   ];
@@ -95,13 +98,59 @@ export function Navbar() {
                 </div>
               )}
               
-              <Link
-                href="/auth/login"
-                className="font-quick font-semibold text-sm bg-c-green text-neutral-900 px-7 py-2.5 rounded-full inline-flex items-center gap-2 hover:bg-[#e4e91f] hover:shadow-[0_0_24px_rgba(203,208,2,0.5)] active:scale-95 transition-all duration-300 shrink-0"
-              >
-                Mulai Sekarang
-                <ChevronRight size={16} className="text-neutral-900" />
-              </Link>
+              {isLoggedIn ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-c-green/30"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-c-blue-50 flex items-center justify-center overflow-hidden border-2 border-c-green">
+                      <User size={18} className="text-c-blue" />
+                    </div>
+                    <span className="text-sm font-quick font-semibold text-white max-w-[100px] truncate">
+                      Hi, Budi
+                    </span>
+                    <ChevronDown size={16} className={`text-white/70 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
+                      <div className="px-4 py-3 border-b border-neutral-100">
+                        <p className="text-sm font-quick font-bold text-neutral-900">Budi Santoso</p>
+                        <p className="text-xs font-sans text-neutral-500 truncate">budi@example.com</p>
+                      </div>
+                      <div className="py-2">
+                        <Link href="/user/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
+                          <User size={18} /> Profil & Dashboard
+                        </Link>
+                        <Link href="/user/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
+                          <Settings size={18} /> Pengaturan
+                        </Link>
+                      </div>
+                      <div className="border-t border-neutral-100 py-2">
+                        <button 
+                          onClick={() => {
+                            setIsLoggedIn(false);
+                            setDropdownOpen(false);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut size={18} /> Keluar
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/auth/login"
+                  className="font-quick font-semibold text-sm bg-c-green text-neutral-900 px-7 py-2.5 rounded-full inline-flex items-center gap-2 hover:bg-[#e4e91f] hover:shadow-[0_0_24px_rgba(203,208,2,0.5)] active:scale-95 transition-all duration-300 shrink-0"
+                >
+                  Mulai Sekarang
+                  <ChevronRight size={16} className="text-neutral-900" />
+                </Link>
+              )}
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -154,15 +203,52 @@ export function Navbar() {
             ))}
           </nav>
 
-          <div className="mt-auto pt-8 pb-12">
-            <Link
-              href="/auth/login"
-              onClick={() => setMobileOpen(false)}
-              className="w-full font-quick font-bold text-lg bg-c-green text-neutral-900 px-6 py-5 rounded-2xl flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_30px_rgba(203,208,2,0.3)]"
-            >
-              Mulai Sekarang <Sparkles className="w-5 h-5" />
-            </Link>
-          </div>
+            {isLoggedIn ? (
+              <div className="mt-auto pt-6 pb-12 border-t border-white/10 space-y-2">
+                <div className="flex items-center gap-4 mb-6 px-2">
+                  <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-c-green">
+                    <User size={28} className="text-c-blue" />
+                  </div>
+                  <div>
+                    <p className="font-quick font-bold text-xl text-white">Budi Santoso</p>
+                    <p className="font-sans text-sm text-white/60">budi@example.com</p>
+                  </div>
+                </div>
+                <Link
+                  href="/user/dashboard"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-white/90 hover:bg-white/10 hover:text-white transition-all"
+                >
+                  <User size={22} className="text-c-green" /> Dashboard Saya
+                </Link>
+                <Link
+                  href="/user/settings"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-white/90 hover:bg-white/10 hover:text-white transition-all"
+                >
+                  <Settings size={22} className="text-c-green" /> Pengaturan
+                </Link>
+                <button
+                  onClick={() => {
+                    setIsLoggedIn(false);
+                    setMobileOpen(false);
+                  }}
+                  className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-red-400 hover:bg-white/10 hover:text-red-300 transition-all text-left"
+                >
+                  <LogOut size={22} /> Keluar
+                </button>
+              </div>
+            ) : (
+              <div className="mt-auto pt-8 pb-12">
+                <Link
+                  href="/auth/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full font-quick font-bold text-lg bg-c-green text-neutral-900 px-6 py-5 rounded-2xl flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_30px_rgba(203,208,2,0.3)]"
+                >
+                  Mulai Sekarang <Sparkles className="w-5 h-5" />
+                </Link>
+              </div>
+            )}
         </div>
       </div>
     </>

@@ -258,3 +258,72 @@ export const orders: Order[] = [
     vendorStatus: "approved",
   },
 ];
+
+export interface EventData {
+  slug: string;
+  title: string;
+  category: string;
+  location: string;
+  date: string;
+  time: string;
+  imageUrl: string;
+  priceFrom: number;
+  organizer: string;
+  description: string;
+  status: "upcoming" | "ongoing" | "past";
+}
+
+export const events: EventData[] = [
+  {
+    slug: "music-fest-2026",
+    title: "Jakarta Summer Music Fest 2026",
+    category: "Konser Musik",
+    location: "GBK Senayan, Jakarta",
+    date: "2026-08-20",
+    time: "15:00 - 23:00 WIB",
+    imageUrl: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&h=600&fit=crop",
+    priceFrom: 250000,
+    organizer: "Live Nation Indonesia",
+    description: "Festival musik musim panas terbesar di Jakarta menampilkan deretan artis ternama dari dalam dan luar negeri. Nikmati pengalaman konser yang tak terlupakan bersama ribuan penikmat musik lainnya.",
+    status: "upcoming",
+  },
+  {
+    slug: "tech-startup-summit",
+    title: "Tech & Startup Summit 2026",
+    category: "Konferensi",
+    location: "JCC Senayan, Jakarta",
+    date: "2026-09-10",
+    time: "09:00 - 17:00 WIB",
+    imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop",
+    priceFrom: 150000,
+    organizer: "TechIndo Media",
+    description: "Konferensi teknologi tahunan yang mempertemukan para founder startup, investor, dan tech enthusiast. Dapatkan insight terbaru dari para ahli di industri teknologi.",
+    status: "upcoming",
+  },
+  {
+    slug: "food-carnival",
+    title: "Nusantara Food Carnival",
+    category: "Pameran & Bazar",
+    location: "Lapangan Banteng, Jakarta",
+    date: "2026-07-25",
+    time: "10:00 - 22:00 WIB",
+    imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&h=600&fit=crop",
+    priceFrom: 35000,
+    organizer: "Kuliner Kita",
+    description: "Jelajahi keanekaragaman kuliner Nusantara dalam satu tempat. Terdapat lebih dari 100 tenant makanan dan minuman tradisional hingga kekinian.",
+    status: "upcoming",
+  },
+  {
+    slug: "indie-art-market",
+    title: "Indie Art Market & Workshop",
+    category: "Seni & Budaya",
+    location: "M Bloc Space, Jakarta",
+    date: "2026-08-05",
+    time: "13:00 - 21:00 WIB",
+    imageUrl: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&h=600&fit=crop",
+    priceFrom: 50000,
+    organizer: "Kolektif Seni JKT",
+    description: "Bazar seni independen yang menghadirkan karya-karya seniman lokal, mulai dari ilustrasi, keramik, hingga pakaian eksklusif. Tersedia juga berbagai kelas workshop kreatif.",
+    status: "upcoming",
+  }
+];

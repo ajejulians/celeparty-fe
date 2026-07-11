@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Quicksand, Inter } from "next/font/google";
+import { Toaster } from "sonner";
 import "../app/globals.css";
 
 const quicksand = Quicksand({
@@ -36,6 +37,15 @@ export default function RootLayout({
           Lewati ke Konten
         </a>
         <div id="main-content">{children}</div>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              fontFamily: "var(--font-sans)",
+              fontSize: "0.875rem",
+            },
+          }}
+        />
       </body>
     </html>
   );

@@ -85,7 +85,7 @@ export default function BlogListPage() {
                 className="w-full pl-9 pr-4 py-2.5 text-sm font-sans rounded-lg border border-neutral-200 focus:outline-none focus:border-c-blue focus:ring-2 focus:ring-c-blue/15 transition-all"
               />
               <span className="absolute left-3 top-2.5 text-neutral-400 text-sm">
-                &#x1F50D;
+                <Search/>
               </span>
             </div>
 
