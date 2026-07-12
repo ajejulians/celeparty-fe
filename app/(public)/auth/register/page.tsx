@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { FormField } from "../../../../components/auth/FormField";
 import { PasswordStrength } from "../../../../components/auth/PasswordStrength";
 import { OtpInput } from "../../../../components/auth/OtpInput";
@@ -277,13 +278,13 @@ export default function RegisterPage() {
                   />
                   <span className="text-xs font-sans text-neutral-600 leading-relaxed">
                     Saya menyetujui{" "}
-                    <a href="#" className="text-c-blue font-medium hover:underline">
+                    <Link href="/legal" className="text-c-blue font-medium hover:underline">
                       Syarat dan Ketentuan
-                    </a>{" "}
+                    </Link>{" "}
                     serta{" "}
-                    <a href="#" className="text-c-blue font-medium hover:underline">
+                    <Link href="/privacy" className="text-c-blue font-medium hover:underline">
                       Kebijakan Privasi
-                    </a>{" "}
+                    </Link>{" "}
                     Celeparty
                   </span>
                 </label>
@@ -313,12 +314,12 @@ export default function RegisterPage() {
             <div className="mt-6 pt-5 border-t border-neutral-100 text-center">
               <p className="text-sm font-sans text-neutral-500">
                 Sudah punya akun?{" "}
-                <a
+                <Link
                   href="/auth/login"
                   className="font-semibold text-c-blue hover:underline"
                 >
                   Masuk
-                </a>
+                </Link>
               </p>
             </div>
           </div>
@@ -404,12 +405,12 @@ export default function RegisterPage() {
               {role === "vendor" ? `"${storeName}" sebagai Vendor` : "Customer"}{" "}
               telah berhasil dibuat.
             </p>
-            <a
+            <Link
               href="/auth/login"
               className="inline-flex items-center gap-2 bg-c-green text-neutral-900 font-quick font-semibold text-sm px-8 py-3 rounded-lg min-h-[44px] hover:brightness-95 hover:shadow-md transition-all"
             >
               Lanjutkan ke Login
-            </a>
+            </Link>
           </div>
         )}
       </div>

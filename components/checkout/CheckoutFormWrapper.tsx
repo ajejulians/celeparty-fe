@@ -44,6 +44,7 @@ export function CheckoutFormWrapper({
   >(() => Array.from({ length: qty }, () => ({})));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const product = getProductBySlug(productSlug);
   const variant = product?.variants[variantIndex];
@@ -100,6 +101,7 @@ export function CheckoutFormWrapper({
 
     setIsSubmitting(true);
     setShowPayment(true);
+    setCurrentStep(1);
   };
 
   const handlePaymentSuccess = () => {
@@ -115,6 +117,7 @@ export function CheckoutFormWrapper({
 
     setIsSubmitting(false);
     setShowPayment(false);
+    setCurrentStep(2);
     toast.success("Pesanan berhasil dibuat!");
     router.push(`/checkout/success?order=${order.orderId}`);
   };
@@ -155,7 +158,7 @@ export function CheckoutFormWrapper({
       <div className="mb-8">
         <ProgressSteps
           steps={["Isi Data", "Ringkasan", "Bayar"]}
-          currentStep={0}
+          currentStep={currentStep}
         />
       </div>
 

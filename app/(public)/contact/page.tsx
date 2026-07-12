@@ -1,24 +1,25 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { MapPin, Mail, MessageCircle, Share2, Globe, Users, ExternalLink, Send, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const formRef = useRef<HTMLFormElement>(null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
       
       setTimeout(() => {
         setIsSuccess(false);
-        (e.target as HTMLFormElement).reset();
+        formRef.current?.reset();
       }, 3000);
     }, 1500);
   };
@@ -116,7 +117,7 @@ export default function ContactPage() {
               <p className="text-neutral-500 font-sans text-sm mt-2">Kami biasanya membalas dalam waktu kurang dari 24 jam.</p>
             </header>
             
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name */}
                 <div className="space-y-2">

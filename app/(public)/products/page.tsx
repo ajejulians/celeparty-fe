@@ -1,5 +1,11 @@
+import { Metadata } from "next";
 import { products } from "../../../lib/data";
 import { TicketCard } from "../../../components/product/TicketCard";
+
+export const metadata: Metadata = {
+  title: "Produk Event | Celeparty",
+  description: "Temukan berbagai produk dan jasa event terbaik di Celeparty — sound system, fotografer, dekorasi, catering, dan lebih banyak lagi.",
+};
 
 const categories = [
   "Audio & Sound",

@@ -1,8 +1,14 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { events } from "../../../lib/data";
 import { formatCurrency, formatDate } from "../../../lib/utils";
 import { MapPin, Calendar, Clock } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Event | Celeparty",
+  description: "Temukan berbagai event menarik di Celeparty — konser, pameran, konferensi, dan lebih banyak lagi.",
+};
 
 export default function EventsPage() {
   return (

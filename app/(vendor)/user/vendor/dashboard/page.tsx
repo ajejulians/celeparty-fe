@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Chart, AreaChartComponent } from "@/components/ui/chart";
 import { Pagination } from "@/components/ui/pagination";
-import { orders, products } from "@/lib/data";
+import { getOrdersByVendor, getProductsByVendor } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
+import { useSession } from "@/lib/session";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import {
   ArrowUpRight,
@@ -37,14 +38,19 @@ const revenueData = [
   { label: "Jul", revenue: 8500000, profit: 4200000 },
 ];
 
-const recentOrders = orders.slice(0, 5);
-const totalRevenue = orders.filter((o) => o.paymentStatus === "settlement").reduce((s, o) => s + o.total, 0);
-const pendingCount = orders.filter((o) => o.vendorStatus === "pending").length;
-const totalOrders = orders.length;
-const activeProducts = products.filter((p) => p.status === "active").length;
-
 export default function VendorDashboardV2Page() {
+  const session = useSession();
+  const vendorOrders = getOrdersByVendor(session.vendorId);
+  const vendorProducts = getProductsByVendor(session.vendorId);
+  const recentOrders = vendorOrders.slice(0, 5);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const pendingCount = vendorOrders.filter((o) => o.paymentStatus === "pending").length;
+  const totalRevenue = vendorOrders
+    .filter((o) => o.paymentStatus === "settlement")
+    .reduce((acc, order) => acc + order.total, 0);
+  const totalOrders = vendorOrders.length;
+  const activeProducts = vendorProducts.filter((p) => p.status === "active").length;
 
   return (
     <>
@@ -128,7 +134,7 @@ export default function VendorDashboardV2Page() {
                 {activeProducts}
               </div>
               <p className="text-xs font-sans text-neutral-500 mt-1">
-                dari {products.length} total produk
+                dari {vendorProducts.length} total produk
               </p>
             </CardContent>
           </Card>
@@ -258,7 +264,7 @@ export default function VendorDashboardV2Page() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {orders.map((order) => (
+                {vendorOrders.map((order) => (
                   <TableRow key={order.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -299,9 +305,9 @@ export default function VendorDashboardV2Page() {
             </Table>
             <Pagination
               currentPage={1}
-              totalPages={1}
-              totalItems={orders.length}
-              pageSize={10}
+              totalPages={Math.ceil(vendorOrders.length / 5) || 1}
+              totalItems={vendorOrders.length}
+              pageSize={5}
               onPageChange={() => {}}
             />
           </CardContent>

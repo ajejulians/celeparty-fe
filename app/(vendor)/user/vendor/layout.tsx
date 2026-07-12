@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { ErpSidebar } from "@/components/layout/ErpSidebar";
 import { ErpMobileNav } from "@/components/layout/ErpMobileNav";
 import { LayoutDashboard, Package, Ticket, ClipboardList, Wallet, User } from "lucide-react";
+import { useSession } from "@/lib/session";
 
 const VENDOR_NAV_ITEMS = [
   { href: "/user/vendor/dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
@@ -16,9 +17,10 @@ const VENDOR_NAV_ITEMS = [
 
 export default function VendorLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const session = useSession();
   return (
     <div className="min-h-screen flex bg-neutral-50">
-      <ErpSidebar storeName="Jakarta Audio Pro" storeInitials="JA" role="vendor" navItems={VENDOR_NAV_ITEMS} activePath={pathname} />
+      <ErpSidebar storeName={session.vendorName} storeInitials={session.storeInitials} role={session.role as "admin" | "vendor"} navItems={VENDOR_NAV_ITEMS} activePath={pathname} />
       <div className="flex-1 min-w-0 pb-16 lg:pb-0">{children}</div>
       <ErpMobileNav items={VENDOR_NAV_ITEMS} activePath={pathname} />
     </div>

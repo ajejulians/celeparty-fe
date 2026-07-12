@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
@@ -33,20 +33,39 @@ export function PaymentSimulator({
   const [selectedBank, setSelectedBank] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const vaNumberRef = useRef<string>("");
+  const timeout1Ref = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeout2Ref = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setSelectedBank(null);
+      setIsProcessing(false);
+      setIsComplete(false);
+      vaNumberRef.current = "";
+    }
+  }, [open]);
+
+  useEffect(() => {
+    return () => {
+      if (timeout1Ref.current) clearTimeout(timeout1Ref.current);
+      if (timeout2Ref.current) clearTimeout(timeout2Ref.current);
+    };
+  }, []);
 
   if (!open) return null;
 
-  const vaNumber = selectedBank
-    ? `${Math.floor(1000000000 + Math.random() * 9000000000)}`
-    : "";
+  if (selectedBank && !vaNumberRef.current) {
+    vaNumberRef.current = `${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+  }
 
   const handlePay = () => {
     if (isProcessing) return;
     setIsProcessing(true);
-    setTimeout(() => {
+    timeout1Ref.current = setTimeout(() => {
       setIsProcessing(false);
       setIsComplete(true);
-      setTimeout(() => {
+      timeout2Ref.current = setTimeout(() => {
         onSuccess();
       }, 1200);
     }, 2500);
@@ -133,7 +152,7 @@ export function PaymentSimulator({
                   Nomor Virtual Account
                 </p>
                 <p className="font-mono font-bold text-xl text-neutral-900 tracking-wider">
-                  {vaNumber}
+                  {vaNumberRef.current}
                 </p>
               </div>
 

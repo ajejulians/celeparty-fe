@@ -10,6 +10,7 @@ export interface Product {
   variants: { name: string; price: number }[];
   description: string;
   vendorName: string;
+  vendorId: string;
 }
 
 export interface Order {
@@ -18,6 +19,7 @@ export interface Order {
   barcode: string;
   customer: string;
   product: string;
+  productSlug: string;
   variant: string;
   qty: number;
   total: number;
@@ -25,6 +27,8 @@ export interface Order {
   orderDate: string;
   eventDate: string;
   vendorStatus: "pending" | "approved" | "rejected";
+  vendorName?: string;
+  vendorId?: string;
 }
 
 export const products: Product[] = [
@@ -43,6 +47,7 @@ export const products: Product[] = [
     ],
     description: "Paket sound system profesional untuk event Anda. Termasuk 2 speaker line array, mixer digital, dan teknisi berpengalaman.",
     vendorName: "Jakarta Audio Pro",
+    vendorId: "v-001",
   },
   {
     slug: "fotografer-event",
@@ -59,6 +64,7 @@ export const products: Product[] = [
     ],
     description: "Jasa fotografer profesional dengan pengalaman 5+ tahun di event pernikahan, ulang tahun, dan corporate gathering.",
     vendorName: "Bandung Visual Story",
+    vendorId: "v-002",
   },
   {
     slug: "dekorasi-pernikahan",
@@ -75,6 +81,7 @@ export const products: Product[] = [
     ],
     description: "Dekorasi pernikahan tema rustic lengkap dengan bunga segar, lighting, dan pelaminan custom.",
     vendorName: "Surabaya Decor House",
+    vendorId: "v-003",
   },
   {
     slug: "catering-gathering",
@@ -91,6 +98,7 @@ export const products: Product[] = [
     ],
     description: "Paket catering untuk acara gathering perusahaan. Menu prasmanan lengkap dengan dessert dan minuman.",
     vendorName: "Citarasa Nusantara",
+    vendorId: "v-004",
   },
   {
     slug: "mc-acara",
@@ -107,6 +115,7 @@ export const products: Product[] = [
     ],
     description: "MC berpengalaman untuk berbagai jenis acara — formal, semi-formal, hingga casual. Bisa dwi-bahasa.",
     vendorName: "Jogja Talent House",
+    vendorId: "v-005",
   },
   {
     slug: "photo-booth",
@@ -123,6 +132,7 @@ export const products: Product[] = [
     ],
     description: "Photo booth 360° dengan platform putar, lighting profesional, dan instant sharing ke media sosial.",
     vendorName: "Jakarta Fun Booth",
+    vendorId: "v-001",
   },
   {
     slug: "lighting-panggung",
@@ -139,6 +149,7 @@ export const products: Product[] = [
     ],
     description: "Lighting panggung lengkap dengan moving head, LED par, smoke machine, dan operator lighting.",
     vendorName: "Bandung Stage Lighting",
+    vendorId: "v-002",
   },
   {
     slug: "videografer-event",
@@ -155,6 +166,7 @@ export const products: Product[] = [
     ],
     description: "Videografer dengan gaya cinematic, drone aerial, dan cinematic color grading.",
     vendorName: "Surabaya Film Works",
+    vendorId: "v-003",
   },
 ];
 
@@ -165,6 +177,7 @@ export const orders: Order[] = [
     barcode: "CTix-20260812-A8F2E1C9",
     customer: "Budi Santoso",
     product: "Sound System Profesional 5000W",
+    productSlug: "sound-system-profesional",
     variant: "Reguler",
     qty: 1,
     total: 2500000,
@@ -172,6 +185,8 @@ export const orders: Order[] = [
     orderDate: "2026-07-10",
     eventDate: "2026-08-12",
     vendorStatus: "approved",
+    vendorName: "Jakarta Audio Pro",
+    vendorId: "v-001",
   },
   {
     id: "ord-002",
@@ -179,6 +194,7 @@ export const orders: Order[] = [
     barcode: "CTix-20260905-B3D7F2A1",
     customer: "Siti Nurhaliza",
     product: "Fotografer Event Premium",
+    productSlug: "fotografer-event",
     variant: "8 Jam",
     qty: 1,
     total: 6000000,
@@ -186,6 +202,8 @@ export const orders: Order[] = [
     orderDate: "2026-07-08",
     eventDate: "2026-09-05",
     vendorStatus: "pending",
+    vendorName: "Bandung Visual Story",
+    vendorId: "v-002",
   },
   {
     id: "ord-003",
@@ -193,6 +211,7 @@ export const orders: Order[] = [
     barcode: "CTix-20261020-C4E8G3B2",
     customer: "Ahmad Fauzi",
     product: "Dekorasi Pernikahan Rustic",
+    productSlug: "dekorasi-pernikahan",
     variant: "Paket Premium",
     qty: 1,
     total: 28000000,
@@ -200,6 +219,8 @@ export const orders: Order[] = [
     orderDate: "2026-07-05",
     eventDate: "2026-10-20",
     vendorStatus: "approved",
+    vendorName: "Surabaya Decor House",
+    vendorId: "v-003",
   },
   {
     id: "ord-004",
@@ -207,6 +228,7 @@ export const orders: Order[] = [
     barcode: "CTix-20260828-D5F9H4C3",
     customer: "Mega Corp Indonesia",
     product: "Catering Gathering 100 Pax",
+    productSlug: "catering-gathering",
     variant: "Menu Nusantara",
     qty: 2,
     total: 17000000,
@@ -214,6 +236,8 @@ export const orders: Order[] = [
     orderDate: "2026-07-12",
     eventDate: "2026-08-28",
     vendorStatus: "approved",
+    vendorName: "Citarasa Nusantara",
+    vendorId: "v-004",
   },
   {
     id: "ord-005",
@@ -221,6 +245,7 @@ export const orders: Order[] = [
     barcode: "CTix-20260915-E6G0I5D4",
     customer: "Dewi Lestari",
     product: "MC Profesional Event",
+    productSlug: "mc-acara",
     variant: "6 Jam",
     qty: 1,
     total: 3500000,
@@ -228,6 +253,8 @@ export const orders: Order[] = [
     orderDate: "2026-07-09",
     eventDate: "2026-09-15",
     vendorStatus: "rejected",
+    vendorName: "Jogja Talent House",
+    vendorId: "v-005",
   },
   {
     id: "ord-006",
@@ -235,6 +262,7 @@ export const orders: Order[] = [
     barcode: "CTix-20260820-F7H1J6E5",
     customer: "Rudi Hartono",
     product: "Lighting Panggung Profesional",
+    productSlug: "lighting-panggung",
     variant: "Paket Full",
     qty: 1,
     total: 7500000,
@@ -242,6 +270,8 @@ export const orders: Order[] = [
     orderDate: "2026-07-11",
     eventDate: "2026-08-20",
     vendorStatus: "pending",
+    vendorName: "Bandung Stage Lighting",
+    vendorId: "v-002",
   },
   {
     id: "ord-007",
@@ -249,6 +279,7 @@ export const orders: Order[] = [
     barcode: "CTix-20261010-G8I2K7F6",
     customer: "PT Sentosa Jaya",
     product: "Videografer Event Cinematic",
+    productSlug: "videografer-event",
     variant: "Full Documentation",
     qty: 1,
     total: 8500000,
@@ -256,8 +287,18 @@ export const orders: Order[] = [
     orderDate: "2026-07-07",
     eventDate: "2026-10-10",
     vendorStatus: "approved",
+    vendorName: "Surabaya Film Works",
+    vendorId: "v-003",
   },
 ];
+
+export const getProductsByVendor = (vendorId: string) => {
+  return products.filter(p => p.vendorId === vendorId);
+};
+
+export const getOrdersByVendor = (vendorId: string) => {
+  return orders.filter(o => o.vendorId === vendorId);
+};
 
 export interface EventData {
   slug: string;
@@ -281,7 +322,7 @@ export const events: EventData[] = [
     location: "GBK Senayan, Jakarta",
     date: "2026-08-20",
     time: "15:00 - 23:00 WIB",
-    imageUrl: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&h=600&fit=crop",
+    imageUrl: "https://placehold.co/800x600/3E2882/FFF.png?text=Music+Festival",
     priceFrom: 250000,
     organizer: "Live Nation Indonesia",
     description: "Festival musik musim panas terbesar di Jakarta menampilkan deretan artis ternama dari dalam dan luar negeri. Nikmati pengalaman konser yang tak terlupakan bersama ribuan penikmat musik lainnya.",
@@ -294,7 +335,7 @@ export const events: EventData[] = [
     location: "JCC Senayan, Jakarta",
     date: "2026-09-10",
     time: "09:00 - 17:00 WIB",
-    imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop",
+    imageUrl: "https://placehold.co/800x600/3E2882/FFF.png?text=Tech+Summit",
     priceFrom: 150000,
     organizer: "TechIndo Media",
     description: "Konferensi teknologi tahunan yang mempertemukan para founder startup, investor, dan tech enthusiast. Dapatkan insight terbaru dari para ahli di industri teknologi.",
@@ -307,7 +348,7 @@ export const events: EventData[] = [
     location: "Lapangan Banteng, Jakarta",
     date: "2026-07-25",
     time: "10:00 - 22:00 WIB",
-    imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&h=600&fit=crop",
+    imageUrl: "https://placehold.co/800x600/3E2882/FFF.png?text=Food+Carnival",
     priceFrom: 35000,
     organizer: "Kuliner Kita",
     description: "Jelajahi keanekaragaman kuliner Nusantara dalam satu tempat. Terdapat lebih dari 100 tenant makanan dan minuman tradisional hingga kekinian.",
@@ -320,7 +361,7 @@ export const events: EventData[] = [
     location: "M Bloc Space, Jakarta",
     date: "2026-08-05",
     time: "13:00 - 21:00 WIB",
-    imageUrl: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&h=600&fit=crop",
+    imageUrl: "https://placehold.co/800x600/3E2882/FFF.png?text=Art+Market",
     priceFrom: 50000,
     organizer: "Kolektif Seni JKT",
     description: "Bazar seni independen yang menghadirkan karya-karya seniman lokal, mulai dari ilustrasi, keramik, hingga pakaian eksklusif. Tersedia juga berbagai kelas workshop kreatif.",

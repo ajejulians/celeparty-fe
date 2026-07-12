@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Quicksand, Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import { SessionProvider } from "../lib/session";
 import "../app/globals.css";
 
 const quicksand = Quicksand({
@@ -36,7 +37,11 @@ export default function RootLayout({
         >
           Lewati ke Konten
         </a>
-        <div id="main-content">{children}</div>
+        <div id="main-content">
+          <SessionProvider>
+            {children}
+          </SessionProvider>
+        </div>
         <Toaster
           position="top-center"
           toastOptions={{

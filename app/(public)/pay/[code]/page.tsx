@@ -7,11 +7,12 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { Sparkles, ShieldCheck, Clock } from "lucide-react";
 
 interface PayPageProps {
-  params: { code: string };
+  params: Promise<{ code: string }>;
 }
 
-export default function PayPage({ params }: PayPageProps) {
-  const paymentLink = getPaymentLinkByCode(params.code);
+export default async function PayPage({ params }: PayPageProps) {
+  const resolvedParams = await params;
+  const paymentLink = getPaymentLinkByCode(resolvedParams.code);
 
   if (!paymentLink) {
     return (
@@ -76,7 +77,7 @@ export default function PayPage({ params }: PayPageProps) {
           </div>
         </div>
 
-        <Card className="animate-slide-up">
+        <Card className="animate-slide-up motion-reduce:animate-none">
           <div
             className={`${bgColor} rounded-t-lg px-6 py-4 text-center`}
           >

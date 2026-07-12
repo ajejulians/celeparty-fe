@@ -3,13 +3,14 @@ import { getProductBySlug } from "@/lib/checkout-data";
 import Link from "next/link";
 
 interface CheckoutPageProps {
-  searchParams: { product?: string; variant?: string; qty?: string };
+  searchParams: Promise<{ product?: string; variant?: string; qty?: string }>;
 }
 
-export default function CheckoutPage({ searchParams }: CheckoutPageProps) {
-  const productSlug = searchParams.product ?? "";
-  const variantIndex = parseInt(searchParams.variant ?? "0", 10);
-  const qty = parseInt(searchParams.qty ?? "1", 10);
+export default async function CheckoutPage({ searchParams }: CheckoutPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const productSlug = resolvedSearchParams.product ?? "";
+  const variantIndex = parseInt(resolvedSearchParams.variant ?? "0", 10);
+  const qty = parseInt(resolvedSearchParams.qty ?? "1", 10);
   const product = getProductBySlug(productSlug);
 
   if (!product) {

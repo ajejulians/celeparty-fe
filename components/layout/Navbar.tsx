@@ -1,17 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { Search, Menu, X, ChevronRight, Sparkles, User, Settings, LogOut, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "@/lib/session";
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Dummy login state
+  const session = useSession();
+  const isLoggedIn = session.isAuthenticated;
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const isLanding = pathname === "/";
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   // Effect to handle navbar styling on scroll
   useEffect(() => {
@@ -99,7 +112,7 @@ export function Navbar() {
               )}
               
               {isLoggedIn ? (
-                <div className="relative">
+                <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-c-green/30"
@@ -131,7 +144,6 @@ export function Navbar() {
                       <div className="border-t border-neutral-100 py-2">
                         <button 
                           onClick={() => {
-                            setIsLoggedIn(false);
                             setDropdownOpen(false);
                           }}
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-red-600 hover:bg-red-50 transition-colors"
@@ -229,10 +241,7 @@ export function Navbar() {
                   <Settings size={22} className="text-c-green" /> Pengaturan
                 </Link>
                 <button
-                  onClick={() => {
-                    setIsLoggedIn(false);
-                    setMobileOpen(false);
-                  }}
+                  onClick={() => setMobileOpen(false)}
                   className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-red-400 hover:bg-white/10 hover:text-red-300 transition-all text-left"
                 >
                   <LogOut size={22} /> Keluar

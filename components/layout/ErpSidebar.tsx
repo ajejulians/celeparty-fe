@@ -67,7 +67,7 @@ export function ErpSidebar({
         {navItems.map((item) => {
           const isActive =
             activePath === item.href ||
-            (item.href !== "#" && activePath?.startsWith(item.href));
+            (item.href !== "#" && activePath && (activePath === item.href || activePath.startsWith(item.href + "/")));
           return (
             <a
               key={item.href}
@@ -89,7 +89,7 @@ export function ErpSidebar({
               </span>
               <span className="flex-1">{item.label}</span>
               {item.badge ? (
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-c-red text-white text-[10px] font-bold font-sans">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-c-red text-white text-xs font-bold font-sans">
                   {item.badge}
                 </span>
               ) : null}

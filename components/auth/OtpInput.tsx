@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { AlertTriangle } from "lucide-react";
 
 interface OtpInputProps {
@@ -17,30 +18,41 @@ export function OtpInput({
   disabled = false,
   error,
 }: OtpInputProps) {
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, length);
+    if (pasted.length > 0) {
+      onChange(pasted);
+      inputRefs.current[Math.min(pasted.length, length - 1)]?.focus();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="flex gap-3">
         {Array.from({ length }).map((_, i) => (
           <input
             key={i}
+            ref={(el) => { inputRefs.current[i] = el; }}
             type="text"
             inputMode="numeric"
             maxLength={1}
             value={value[i] || ""}
             disabled={disabled}
+            onPaste={i === 0 ? handlePaste : undefined}
             onChange={(e) => {
               const newVal = value.split("");
               newVal[i] = e.target.value.replace(/\D/g, "");
               onChange(newVal.join(""));
               if (e.target.value && i < length - 1) {
-                const next = e.target.parentElement?.children[i + 1] as HTMLInputElement;
-                next?.focus();
+                inputRefs.current[i + 1]?.focus();
               }
             }}
             onKeyDown={(e) => {
               if (e.key === "Backspace" && !value[i] && i > 0) {
-                const prev = e.currentTarget.parentElement?.children[i - 1] as HTMLInputElement;
-                prev?.focus();
+                inputRefs.current[i - 1]?.focus();
               }
             }}
             className={`w-12 h-14 text-center font-quick font-bold text-xl rounded-lg border-2 transition-all duration-150 focus:outline-none focus:border-c-blue focus:ring-2 focus:ring-c-blue/15 ${

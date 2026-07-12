@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { blogDetails, BlogDetail } from "../../../../lib/blog-data";
 import { products, Product } from "../../../../lib/data";
 import { formatDate } from "../../../../lib/utils";
@@ -22,24 +23,25 @@ export default function BlogDetailPage() {
 
   const fetchBlog = useCallback(() => {
     setState("loading");
-    setTimeout(() => {
-      const found = blogDetail[slug];
-      if (!found) {
-        setState("error");
-        return;
-      }
-      setBlog(found);
-      const related = found.relatedProductSlugs
-        .map((s) => products.find((p) => p.slug === s))
-        .filter(Boolean) as Product[];
-      setRelatedProducts(related);
-      setState("loaded");
-    }, 1000);
+    const found = blogDetail[slug];
+    if (!found) {
+      setState("error");
+      return;
+    }
+    setBlog(found);
+    const related = found.relatedProductSlugs
+      .map((s) => products.find((p) => p.slug === s))
+      .filter(Boolean) as Product[];
+    setRelatedProducts(related);
+    setState("loaded");
   }, [slug]);
 
   useEffect(() => {
     fetchBlog();
-  }, [fetchBlog]);
+    if (blog) {
+      document.title = `${blog.title} | Celeparty`;
+    }
+  }, [fetchBlog, blog]);
 
   if (state === "loading") {
     return (
@@ -75,12 +77,12 @@ export default function BlogDetailPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           <article className="flex-1 min-w-0 max-w-3xl mx-auto lg:mx-0">
-            <a
+            <Link
               href="/blog"
               className="inline-flex items-center gap-1 text-sm font-sans text-neutral-500 hover:text-c-blue transition-colors mb-6"
             >
               &larr; Kembali ke Blog
-            </a>
+            </Link>
 
             <div className="mb-2">
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold font-sans bg-c-blue-50 text-c-blue">
@@ -164,7 +166,7 @@ export default function BlogDetailPage() {
                   .filter((b) => b.slug !== slug)
                   .slice(0, 4)
                   .map((b) => (
-                    <a
+                    <Link
                       key={b.slug}
                       href={`/blog/${b.slug}`}
                       className="flex gap-3 group p-2 rounded-lg hover:bg-white hover:shadow-card transition-all duration-200"
@@ -173,14 +175,14 @@ export default function BlogDetailPage() {
                         <div className="w-full h-full bg-neutral-200" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] font-sans text-neutral-500 mb-0.5">
+                        <p className="text-xs font-sans text-neutral-500 mb-0.5">
                           {b.category}
                         </p>
                         <h4 className="font-quick font-semibold text-xs text-neutral-900 leading-snug line-clamp-2 group-hover:text-c-blue transition-colors">
                           {b.title}
                         </h4>
                       </div>
-                    </a>
+                    </Link>
                   ))}
               </div>
             </div>

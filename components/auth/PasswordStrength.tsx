@@ -18,7 +18,7 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
   const widths = ["w-1/4", "w-2/4", "w-3/4", "w-full"];
   const textColors = ["text-c-red", "text-c-orange", "text-status-pending", "text-status-success"];
 
-  const idx = Math.max(0, strength - 1);
+  const idx = strength === 0 ? 0 : strength - 1;
 
   return (
     <div className="mt-2 space-y-1">

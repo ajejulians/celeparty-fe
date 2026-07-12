@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { FormField } from "../../../../components/auth/FormField";
 import { Eye, EyeOff, AlertTriangle, Check, Lock } from "lucide-react";
 
@@ -154,12 +155,12 @@ export default function LoginPage() {
                 </span>
               </label>
 
-              <a
-                href="#"
+              <Link
+                href="/auth/forgot-password"
                 className="text-xs font-sans font-medium text-c-blue hover:underline"
               >
                 Lupa Kata Sandi?
-              </a>
+              </Link>
 
               <button
                 type="button"
@@ -227,12 +228,12 @@ export default function LoginPage() {
           <div className="mt-6 pt-5 border-t border-neutral-100 text-center">
             <p className="text-sm font-sans text-neutral-500">
               Belum punya akun?{" "}
-              <a
+              <Link
                 href="/auth/register"
                 className="font-semibold text-c-blue hover:underline"
               >
                 Daftar Sekarang
-              </a>
+              </Link>
             </p>
           </div>
         </div>

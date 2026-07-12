@@ -1,12 +1,28 @@
+"use client";
+
+import { useState } from "react";
+
 import { ErpHeader } from "@/components/layout/ErpHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { orders } from "@/lib/data";
+import { getOrdersByVendor } from "@/lib/data";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { useSession } from "@/lib/session";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { Ticket, Scan, Search, QrCode, CheckCircle, Circle } from "lucide-react";
 
 export default function VendorTicketsPage() {
-  const ticketOrders = orders.filter((o) => o.barcode);
+  const session = useSession();
+  const vendorOrders = getOrdersByVendor(session.vendorId);
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const ticketOrders = vendorOrders.filter((o) => {
+    if (!o.barcode) return false;
+    const q = searchQuery.toLowerCase();
+    return (
+      (o.barcode && o.barcode.toLowerCase().includes(q)) ||
+      o.customer.toLowerCase().includes(q)
+    );
+  });
   return (
     <>
       <ErpHeader breadcrumbs={[{ label: "Dashboard", href: "/user/vendor/dashboard" }, { label: "Tiket Event" }]} />
@@ -23,10 +39,10 @@ export default function VendorTicketsPage() {
         </div>
         <div className="bg-white rounded-lg border border-neutral-200">
           <div className="p-4 border-b border-neutral-100 flex items-center gap-3">
-            <div className="relative flex-1 max-w-xs"><Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400"/><input placeholder="Cari barcode..." className="pl-9 pr-3 py-2 text-sm border border-neutral-200 rounded-lg w-full font-sans focus:outline-none focus:border-c-blue"/></div>
+            <div className="relative flex-1 max-w-xs"><Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400"/><input placeholder="Cari barcode..." className="pl-9 pr-3 py-2 text-sm border border-neutral-200 rounded-lg w-full font-sans focus:outline-none focus:border-c-blue" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} /></div>
             <select className="text-sm border border-neutral-200 rounded-lg px-3 py-2 font-sans focus:outline-none focus:border-c-blue"><option>Semua Tiket</option></select>
           </div>
-          <div className="overflow-x-auto"><table className="w-full min-w-[700px]"><thead><tr className="bg-neutral-50 border-b border-neutral-200"><th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Barcode</th><th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Penerima</th><th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Event</th><th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Tgl Event</th><th className="text-center text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Status</th><th className="text-center text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Scan</th></tr></thead><tbody>{ticketOrders.map((o,i)=><tr key={o.id} className={`border-b border-neutral-100 last:border-0 hover:bg-neutral-50 ${i%2===0?"bg-white":"bg-neutral-50/50"}`}><td className="px-4 py-3 font-mono text-xs text-neutral-600">{o.barcode}</td><td className="px-4 py-3 font-sans text-sm text-neutral-900">{o.customer}</td><td className="px-4 py-3 font-sans text-sm text-neutral-700 max-w-[200px] truncate">{o.product}</td><td className="px-4 py-3 font-sans text-xs text-neutral-500">{formatDate(o.eventDate)}</td><td className="px-4 py-3 text-center"><StatusBadge status="active"/></td><td className="px-4 py-3 text-center"><button className="inline-flex items-center gap-1 bg-c-blue text-white font-quick font-semibold text-xs px-3 py-1.5 rounded-md hover:bg-c-blue/90"><QrCode className="w-3.5 h-3.5"/>Scan</button></td></tr>)}</tbody></table></div>
+          <div className="overflow-x-auto"><table className="w-full min-w-[700px]"><thead><tr className="bg-neutral-50 border-b border-neutral-200"><th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Barcode</th><th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Penerima</th><th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Event</th><th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Tgl Event</th><th className="text-center text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Status</th><th className="text-center text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Scan</th></tr></thead><tbody>{ticketOrders.map((o,i)=><tr key={o.id} className={`border-b border-neutral-100 last:border-0 hover:bg-neutral-50 ${i%2===0?"bg-white":"bg-neutral-50/50"}`}><td className="px-4 py-3 font-mono text-xs text-neutral-600">{o.barcode}</td><td className="px-4 py-3 font-sans text-sm text-neutral-900">{o.customer}</td><td className="px-4 py-3 font-sans text-sm text-neutral-700 max-w-[200px] truncate">{o.product}</td><td className="px-4 py-3 font-sans text-xs text-neutral-500">{formatDate(o.eventDate)}</td><td className="px-4 py-3 text-center"><StatusBadge status={o.paymentStatus}/></td><td className="px-4 py-3 text-center"><button className="inline-flex items-center gap-1 bg-c-blue text-white font-quick font-semibold text-xs px-3 py-1.5 rounded-md hover:bg-c-blue/90"><QrCode className="w-3.5 h-3.5"/>Scan</button></td></tr>)}</tbody></table></div>
         </div>
       </div>
     </>

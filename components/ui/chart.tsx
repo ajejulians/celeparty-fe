@@ -18,10 +18,10 @@ export function Chart({ data, config, className }: ChartProps) {
     <div className={className}>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{ top: 16, right: 16, bottom: 0, left: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E5E5" />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} tick={{ fontSize: 12, fontFamily: "Inter" }} />
           <YAxis tickLine={false} axisLine={false} tickMargin={8} tick={{ fontSize: 12, fontFamily: "Inter" }} />
-          <Tooltip cursor={{ fill: "#F0EDF9" }} contentStyle={{ borderRadius: "8px", border: "1px solid #E5E5E5", fontFamily: "Inter", fontSize: "13px" }} />
+          <Tooltip cursor={{ fill: "var(--color-c-blue-50)" }} contentStyle={{ borderRadius: "8px", border: "1px solid var(--color-neutral-200)", fontFamily: "Inter", fontSize: "13px" }} />
           {keys.map((key) => (
             <Bar key={key} dataKey={key} fill={config[key].color} radius={[4, 4, 0, 0]} />
           ))}

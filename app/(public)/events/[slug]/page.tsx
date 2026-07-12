@@ -5,8 +5,15 @@ import { events } from "../../../../lib/data";
 import { formatCurrency, formatDate } from "../../../../lib/utils";
 import { MapPin, Calendar, Clock, Share2, Heart, ArrowLeft, Ticket } from "lucide-react";
 
-export default function EventDetailPage({ params }: { params: { slug: string } }) {
-  const event = events.find((e) => e.slug === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const event = events.find((e) => e.slug === slug);
+  return { title: `${event?.title || "Event"} | Celeparty`, description: event?.description || "Detail Event" };
+}
+
+export default async function EventDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const event = events.find((e) => e.slug === resolvedParams.slug);
 
   if (!event) {
     notFound();
@@ -109,10 +116,10 @@ export default function EventDetailPage({ params }: { params: { slug: string } }
                 <p className="font-quick font-bold text-4xl text-c-blue mb-8">
                   {formatCurrency(event.priceFrom)}
                 </p>
-                <button className="w-full font-quick font-bold text-lg bg-c-green text-neutral-900 px-6 py-4 rounded-xl flex items-center justify-center gap-3 hover:brightness-110 hover:-translate-y-1 active:scale-95 transition-all shadow-[0_0_20px_rgba(203,208,2,0.3)]">
+                <Link href={`/checkout?product=${event.slug}`} className="w-full font-quick font-bold text-lg bg-c-green text-neutral-900 px-6 py-4 rounded-xl flex items-center justify-center gap-3 hover:brightness-110 hover:-translate-y-1 active:scale-95 transition-all shadow-[0_0_20px_rgba(203,208,2,0.3)]">
                   <Ticket size={24} />
                   Beli Tiket
-                </button>
+                </Link>
               </div>
             </div>
           </div>

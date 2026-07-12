@@ -20,7 +20,7 @@ export function ErpMobileNav({ items, activePath }: ErpMobileNavProps) {
         {items.map((item) => {
           const isActive =
             activePath === item.href ||
-            (item.href !== "#" && activePath?.startsWith(item.href));
+            (item.href !== "#" && activePath && (activePath === item.href || activePath.startsWith(item.href + "/")));
           return (
             <a
               key={item.href}
@@ -31,7 +31,7 @@ export function ErpMobileNav({ items, activePath }: ErpMobileNavProps) {
               )}
             >
               <span className="w-5 h-5">{item.icon}</span>
-              <span className="text-[10px] font-quick font-semibold truncate max-w-[64px]">
+              <span className="text-xs font-quick font-semibold truncate max-w-[64px]">
                 {item.label}
               </span>
             </a>

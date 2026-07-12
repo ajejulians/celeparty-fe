@@ -8,11 +8,12 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { CheckCircle2, ArrowRight, ShoppingBag, Calendar, MapPin, Ticket } from "lucide-react";
 
 interface SuccessPageProps {
-  searchParams: { order?: string };
+  searchParams: Promise<{ order?: string }>;
 }
 
-export default function CheckoutSuccessPage({ searchParams }: SuccessPageProps) {
-  const orderId = searchParams.order ?? "";
+export default async function CheckoutSuccessPage({ searchParams }: SuccessPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const orderId = resolvedSearchParams.order ?? "";
   const order = getOrderById(orderId);
 
   if (!order) {
@@ -34,15 +35,13 @@ export default function CheckoutSuccessPage({ searchParams }: SuccessPageProps) 
     );
   }
 
-  const product = getProductBySlug(
-    order.product.toLowerCase().replace(/\s+/g, "-")
-  );
+  const product = getProductBySlug(order.productSlug);
   const isEscrow = product?.status === "escrow_badge";
 
   return (
     <div className="min-h-screen bg-neutral-50">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-8 animate-fade-in">
+        <div className="text-center mb-8 animate-fade-in motion-reduce:animate-none">
           <div className="w-16 h-16 rounded-full bg-status-success/10 flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="w-8 h-8 text-status-success" />
           </div>
@@ -55,7 +54,7 @@ export default function CheckoutSuccessPage({ searchParams }: SuccessPageProps) 
           </p>
         </div>
 
-        <Card className="animate-slide-up">
+        <Card className="animate-slide-up motion-reduce:animate-none">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <CardTitle>Detail Pesanan</CardTitle>

@@ -203,7 +203,7 @@ export default function AdminDashboardV2Page() {
                           {vendor.name}
                         </p>
                         {vendor.status === "pending" && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-sans font-semibold bg-amber-50 text-amber-700">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-sans font-semibold bg-amber-50 text-amber-700">
                             Menunggu
                           </span>
                         )}
@@ -292,7 +292,7 @@ export default function AdminDashboardV2Page() {
                     </TableCell>
                     <TableCell>
                       <p className="font-sans text-sm text-neutral-700">
-                        Jakarta Audio Pro
+                        {order.vendorName ?? "—"}
                       </p>
                     </TableCell>
                     <TableCell>

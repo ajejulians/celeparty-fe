@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { blogList, BlogListItem } from "../../../lib/blog-data";
 import { BlogCard } from "../../../components/blog/BlogCard";
 import { BlogCardSkeleton } from "../../../components/blog/BlogCardSkeleton";
@@ -11,12 +11,11 @@ import { Search, FileText } from "lucide-react";
 type FetchState = "loading" | "loaded" | "error";
 
 export default function BlogListPage() {
-  const [state, setState] = useState<FetchState>("loading");
+  const [state, setState] = useState<FetchState>("loaded");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    const timer = setTimeout(() => setState("loaded"), 1200);
-    return () => clearTimeout(timer);
+    document.title = "Blog | Celeparty";
   }, []);
 
   const filteredBlogs = useMemo(() => {
@@ -55,8 +54,7 @@ export default function BlogListPage() {
           title="Gagal memuat artikel"
           message="Terjadi kesalahan saat memuat daftar blog. Silakan coba lagi."
           onRetry={() => {
-            setState("loading");
-            setTimeout(() => setState("loaded"), 800);
+            setState("loaded");
           }}
         />
       </div>
@@ -124,7 +122,7 @@ export default function BlogListPage() {
                       <div className="w-full h-full bg-neutral-200" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[10px] font-sans text-neutral-500 mb-0.5">
+                      <p className="text-xs font-sans text-neutral-500 mb-0.5">
                         {blog.category}
                       </p>
                       <h4 className="font-quick font-semibold text-xs text-neutral-900 leading-snug line-clamp-2 group-hover:text-c-blue transition-colors">

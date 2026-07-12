@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import { products } from "../../../../lib/data";
 import { formatCurrency, formatDate } from "../../../../lib/utils";
 import { StatusBadge } from "../../../../components/feedback/StatusBadge";
@@ -11,13 +13,20 @@ import { Calendar, Minus, Plus, ShoppingCart } from "lucide-react";
 export default function ProductDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const resolvedParams = use(params);
   const router = useRouter();
-  const product = products.find((p) => p.slug === params.slug);
+  const product = products.find((p) => p.slug === resolvedParams.slug);
 
   const [selectedVariant, setSelectedVariant] = useState(0);
   const [qty, setQty] = useState(1);
+
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.name} | Celeparty`;
+    }
+  }, [product]);
 
   if (!product) {
     return (
@@ -25,12 +34,12 @@ export default function ProductDetailPage({
         <h1 className="font-quick font-bold text-2xl text-neutral-900">
           Produk tidak ditemukan
         </h1>
-        <a
+        <Link
           href="/products"
           className="inline-block mt-4 text-c-blue font-quick font-semibold text-sm hover:underline"
         >
           &larr; Kembali ke Katalog
-        </a>
+        </Link>
       </div>
     );
   }
@@ -53,16 +62,16 @@ export default function ProductDetailPage({
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <a
+        <Link
           href="/products"
           className="inline-flex items-center gap-1 text-sm font-sans text-neutral-500 hover:text-c-blue transition-colors mb-6"
         >
           &larr; Kembali ke Katalog
-        </a>
+        </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           <div className="relative aspect-[4/3] bg-neutral-100 rounded-xl overflow-hidden">
-            <div className="absolute inset-0 bg-neutral-200" />
+            <Image src={product.imageUrl} alt={product.name} fill className="object-cover" />
             <StatusBadge status={product.status} />
           </div>
 

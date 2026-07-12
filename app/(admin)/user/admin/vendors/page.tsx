@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { ErpHeader } from "@/components/layout/ErpHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Store, Search, Eye, CheckCircle, XCircle } from "lucide-react";
@@ -9,6 +12,13 @@ const vendors = [
 ];
 
 export default function AdminVendorsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredVendors = vendors.filter(v => 
+    v.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    v.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
       <ErpHeader
@@ -33,7 +43,12 @@ export default function AdminVendorsPage() {
           <div className="p-4 border-b border-neutral-100">
             <div className="relative max-w-xs">
               <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
-              <input placeholder="Cari vendor..." className="pl-9 pr-3 py-2 text-sm border border-neutral-200 rounded-lg w-full font-sans focus:outline-none focus:border-c-blue" />
+              <input 
+                placeholder="Cari vendor..." 
+                className="pl-9 pr-3 py-2 text-sm border border-neutral-200 rounded-lg w-full font-sans focus:outline-none focus:border-c-blue"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           </div>
 
@@ -50,7 +65,7 @@ export default function AdminVendorsPage() {
                 </tr>
               </thead>
               <tbody>
-                {vendors.map((vendor, i) => (
+                {filteredVendors.map((vendor, i) => (
                   <tr key={vendor.id} className={`border-b border-neutral-100 last:border-0 hover:bg-neutral-50 transition-colors ${i % 2 === 0 ? "bg-white" : "bg-neutral-50/50"}`}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
@@ -75,10 +90,18 @@ export default function AdminVendorsPage() {
                         </button>
                         {vendor.status === "pending" && (
                           <>
-                            <button className="p-1.5 rounded-md text-neutral-500 hover:bg-emerald-50 hover:text-emerald-600 transition-colors" aria-label="Terima">
+                            <button 
+                              className="p-1.5 rounded-md text-neutral-500 hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer" 
+                              aria-label="Terima"
+                              onClick={() => alert("Fitur ini akan segera hadir")}
+                            >
                               <CheckCircle className="w-4 h-4" />
                             </button>
-                            <button className="p-1.5 rounded-md text-neutral-500 hover:bg-red-50 hover:text-c-red transition-colors" aria-label="Tolak">
+                            <button 
+                              className="p-1.5 rounded-md text-neutral-500 hover:bg-red-50 hover:text-c-red transition-colors cursor-pointer" 
+                              aria-label="Tolak"
+                              onClick={() => alert("Fitur ini akan segera hadir")}
+                            >
                               <XCircle className="w-4 h-4" />
                             </button>
                           </>

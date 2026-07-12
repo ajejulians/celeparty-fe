@@ -170,11 +170,12 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {products.slice(0, 4).map((product) => (
+            {products.slice(0, 4).map((product, index) => (
               <TicketCard
                 key={product.slug}
                 product={product}
                 variant="landing"
+                priority={index === 0}
               />
             ))}
           </div>

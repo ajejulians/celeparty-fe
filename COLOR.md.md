@@ -120,11 +120,11 @@ typography:
     fontWeight: '400'
     lineHeight: 20px
 rounded:
-  sm: 0.25rem
-  DEFAULT: 0.5rem
-  md: 0.75rem
-  lg: 1rem
-  xl: 1.5rem
+  sm: 4px
+  md: 8px
+  lg: 12px
+  xl: 16px
+  2xl: 24px
   full: 9999px
 spacing:
   xs: 4px

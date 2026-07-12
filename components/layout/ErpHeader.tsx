@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, Menu } from "lucide-react";
+import { useSession } from "@/lib/session";
 
 interface ErpHeaderProps {
   breadcrumbs: { label: string; href?: string }[];
@@ -13,6 +14,7 @@ export function ErpHeader({
   notificationCount = 0,
   onMenuToggle,
 }: ErpHeaderProps) {
+  const session = useSession();
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-neutral-200">
       <div className="flex items-center justify-between h-14 px-4 lg:px-6">
@@ -53,7 +55,7 @@ export function ErpHeader({
           >
             <Bell className="w-5 h-5" />
             {notificationCount > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-c-red text-white text-[10px] font-bold font-sans flex items-center justify-center">
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-c-red text-white text-xs font-bold font-sans flex items-center justify-center">
                 {notificationCount > 9 ? "9+" : notificationCount}
               </span>
             )}
@@ -62,14 +64,14 @@ export function ErpHeader({
           <div className="flex items-center gap-2 pl-3 border-l border-neutral-200">
             <div className="w-8 h-8 rounded-lg bg-c-blue flex items-center justify-center">
               <span className="font-quick font-bold text-white text-xs">
-                JA
+                {session.storeInitials}
               </span>
             </div>
             <div className="hidden sm:block">
               <p className="text-xs font-quick font-semibold text-neutral-700">
-                Jakarta Audio Pro
+                {session.vendorName}
               </p>
-              <p className="text-[10px] font-sans text-neutral-500">Vendor</p>
+              <p className="text-xs font-sans text-neutral-500 capitalize">{session.role}</p>
             </div>
           </div>
         </div>

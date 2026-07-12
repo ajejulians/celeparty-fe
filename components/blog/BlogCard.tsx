@@ -14,7 +14,7 @@ export function BlogCard({ blog }: BlogCardProps) {
       <div className="relative aspect-[16/9] bg-neutral-100 overflow-hidden">
         <div className="absolute inset-0 bg-neutral-200" />
         <div className="absolute bottom-2 left-2">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold font-sans bg-c-blue/80 text-white">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold font-sans bg-c-blue/80 text-white">
             {blog.category}
           </span>
         </div>

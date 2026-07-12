@@ -9,12 +9,14 @@ interface TicketCardProps {
   product: Product;
   variant?: "catalog" | "compact" | "landing";
   className?: string;
+  priority?: boolean;
 }
 
 export function TicketCard({
   product,
   variant = "catalog",
   className,
+  priority = false,
 }: TicketCardProps) {
   const isCompact = variant === "compact";
   const isLanding = variant === "landing";
@@ -32,6 +34,7 @@ export function TicketCard({
           src={product.imageUrl} 
           alt={product.name}
           fill
+          priority={priority}
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
@@ -45,7 +48,7 @@ export function TicketCard({
         <p
           className={cn(
             "text-neutral-500 mb-1",
-            isCompact ? "text-[10px] font-sans" : "text-xs font-sans"
+            isCompact ? "text-xs font-sans" : "text-xs font-sans"
           )}
         >
           {product.category} &middot; {product.city}
@@ -68,7 +71,7 @@ export function TicketCard({
         {isCompact ? (
           <div className="mt-2 flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-neutral-500">Mulai dari</p>
+              <p className="text-xs text-neutral-500">Mulai dari</p>
               <p className="font-quick font-bold text-base text-c-blue">
                 {formatCurrency(product.priceFrom)}
               </p>

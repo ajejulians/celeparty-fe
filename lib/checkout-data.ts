@@ -1,4 +1,4 @@
-import { products, Order } from "./data";
+import { products, events, Order } from "./data";
 
 export interface Recipient {
   name: string;
@@ -28,7 +28,26 @@ const mockOrders: Map<string, Order> = new Map();
 const mockPaymentLinks: Map<string, PaymentLink> = new Map();
 
 export function getProductBySlug(slug: string) {
-  return products.find((p) => p.slug === slug) ?? null;
+  const product = products.find((p) => p.slug === slug);
+  if (product) return product;
+  
+  const event = events.find((e) => e.slug === slug);
+  if (event) {
+    return {
+      slug: event.slug,
+      name: event.title,
+      category: event.category,
+      city: event.location,
+      date: event.date,
+      imageUrl: event.imageUrl,
+      priceFrom: event.priceFrom,
+      status: "active" as const,
+      variants: [{ name: "Reguler", price: event.priceFrom }, { name: "VIP", price: event.priceFrom * 2 }],
+      description: event.description,
+      vendorName: event.organizer,
+    };
+  }
+  return null;
 }
 
 export function generateOrderId(dateStr: string): string {
@@ -69,6 +88,7 @@ export function createOrder(
     barcode: generateBarcode(product.date),
     customer: recipients[0]?.name ?? "Customer",
     product: product.name,
+    productSlug,
     variant: variant.name,
     qty,
     total: variant.price * qty,
@@ -76,6 +96,7 @@ export function createOrder(
     orderDate: new Date().toISOString().split("T")[0],
     eventDate: product.date,
     vendorStatus: "pending",
+    vendorName: product.vendorName,
   };
 
   mockOrders.set(order.orderId, order);
@@ -113,7 +134,7 @@ export function createPaymentLink(orderId: string, productSlug: string, variantI
     };
     mockPaymentLinks.set(dpLink.code, dpLink);
     links.push(dpLink);
-    links.push({
+    const remainingLink: PaymentLink = {
       code: `${code}-RM`,
       productSlug,
       variantIndex,
@@ -121,7 +142,9 @@ export function createPaymentLink(orderId: string, productSlug: string, variantI
       type: "remaining",
       validUntil: new Date(product.date).toISOString(),
       orderId,
-    });
+    };
+    mockPaymentLinks.set(remainingLink.code, remainingLink);
+    links.push(remainingLink);
   } else {
     const fullLink: PaymentLink = {
       code,
@@ -133,6 +156,7 @@ export function createPaymentLink(orderId: string, productSlug: string, variantI
       orderId,
     };
     mockPaymentLinks.set(fullLink.code, fullLink);
+    links.push(fullLink);
   }
 
   return links[0] ?? null;
