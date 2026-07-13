@@ -102,7 +102,8 @@ export default function RegisterPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12 bg-neutral-50">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 flex flex-col items-center">
+          <img src="/images/favicon.ico" alt="Celeparty Logo" className="w-12 h-12 object-contain mb-3" />
           <h1 className="font-quick font-bold text-3xl text-c-blue mb-2">
             CELEPARTY
           </h1>

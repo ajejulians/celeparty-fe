@@ -3,13 +3,16 @@
 import { usePathname } from "next/navigation";
 import { ErpSidebar } from "@/components/layout/ErpSidebar";
 import { ErpMobileNav } from "@/components/layout/ErpMobileNav";
-import { LayoutDashboard, ClipboardList, Store, Users, BarChart3 } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Store, Users, BarChart3, Calculator, FileText, CheckCircle } from "lucide-react";
 
 const ADMIN_NAV_ITEMS = [
   { href: "/user/admin/dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
   { href: "/user/admin/orders", icon: <ClipboardList className="w-5 h-5" />, label: "Semua Pesanan", badge: 7 },
   { href: "/user/admin/vendors", icon: <Store className="w-5 h-5" />, label: "Vendor" },
   { href: "/user/admin/users", icon: <Users className="w-5 h-5" />, label: "Pengguna" },
+  { href: "/user/admin/moderation", icon: <CheckCircle className="w-5 h-5" />, label: "Moderasi" },
+  { href: "/user/admin/quotation", icon: <Calculator className="w-5 h-5" />, label: "Quotation" },
+  { href: "/user/admin/blog", icon: <FileText className="w-5 h-5" />, label: "Blog" },
   { href: "/user/admin/reports", icon: <BarChart3 className="w-5 h-5" />, label: "Laporan" },
 ];
 

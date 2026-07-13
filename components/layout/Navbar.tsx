@@ -55,7 +55,6 @@ export function Navbar() {
     { name: "Beranda", path: "/" },
     { name: "Produk", path: "/products" },
     { name: "Event", path: "/events" },
-    { name: "Vendor", path: "/vendor" },
     { name: "Blog", path: "/blog" },
   ];
 
@@ -76,9 +75,7 @@ export function Navbar() {
               href="/"
               className="flex items-center gap-2.5 font-quick font-bold text-2xl text-white tracking-wide shrink-0 group"
             >
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-c-green to-[#A3A702] flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                <Sparkles className="w-5 h-5 text-c-blue" />
-              </div>
+              <img src="/images/favicon.ico" alt="Celeparty Logo" className="w-9 h-9 object-contain group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 rounded-xl" />
               CELEPARTY
             </Link>
 
@@ -134,17 +131,22 @@ export function Navbar() {
                         <p className="text-xs font-sans text-neutral-500 truncate">budi@example.com</p>
                       </div>
                       <div className="py-2">
-                        <Link href="/user/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
-                          <User size={18} /> Profil & Dashboard
+                        <Link href="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
+                          <User size={18} /> Profile
                         </Link>
-                        <Link href="/user/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
-                          <Settings size={18} /> Pengaturan
+                        <Link href="/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
+                          <Settings size={18} /> Settings
+                        </Link>
+                        <Link href="/bookings" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
+                          <Settings size={18} /> Bookings
                         </Link>
                       </div>
                       <div className="border-t border-neutral-100 py-2">
                         <button 
                           onClick={() => {
                             setDropdownOpen(false);
+                            session.logout();
+                            window.location.href = "/";
                           }}
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-red-600 hover:bg-red-50 transition-colors"
                         >
@@ -227,21 +229,32 @@ export function Navbar() {
                   </div>
                 </div>
                 <Link
-                  href="/user/dashboard"
+                  href="/profile"
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-white/90 hover:bg-white/10 hover:text-white transition-all"
                 >
-                  <User size={22} className="text-c-green" /> Dashboard Saya
+                  <User size={22} className="text-c-green" /> Profile
                 </Link>
                 <Link
-                  href="/user/settings"
+                  href="/settings"
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-white/90 hover:bg-white/10 hover:text-white transition-all"
                 >
-                  <Settings size={22} className="text-c-green" /> Pengaturan
+                  <Settings size={22} className="text-c-green" /> Settings
+                </Link>
+                <Link
+                  href="/bookings"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-white/90 hover:bg-white/10 hover:text-white transition-all"
+                >
+                  <Settings size={22} className="text-c-green" /> Bookings
                 </Link>
                 <button
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() => {
+                    setMobileOpen(false);
+                    session.logout();
+                    window.location.href = "/";
+                  }}
                   className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-red-400 hover:bg-white/10 hover:text-red-300 transition-all text-left"
                 >
                   <LogOut size={22} /> Keluar

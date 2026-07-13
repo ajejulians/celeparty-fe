@@ -39,8 +39,9 @@ export function ErpSidebar({
       <div className="p-5 border-b border-neutral-100">
         <a
           href="/"
-          className="font-quick font-bold text-xl text-c-blue tracking-wide"
+          className="flex items-center gap-2 font-quick font-bold text-xl text-c-blue tracking-wide"
         >
+          <img src="/images/favicon.ico" alt="Celeparty Logo" className="w-6 h-6 object-contain" />
           CELEPARTY
         </a>
       </div>

@@ -7,6 +7,7 @@ import { formatCurrency } from "@/lib/utils";
 import { useSession } from "@/lib/session";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { Package, Plus, Search, Pencil, Eye } from "lucide-react";
+import Link from "next/link";
 
 export default function VendorProductsPage() {
   const session = useSession();
@@ -17,7 +18,7 @@ export default function VendorProductsPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-8">
           <div><h1 className="font-quick font-bold text-2xl text-neutral-900">Produk & Jasa</h1><p className="font-sans text-sm text-neutral-500 mt-1">Kelola produk dan layanan Anda</p></div>
-          <button className="inline-flex items-center gap-2 bg-c-blue text-white font-quick font-semibold text-sm px-4 py-2.5 rounded-lg min-h-[44px] hover:bg-c-blue/90 active:scale-[0.98] transition-all"><Plus className="w-4 h-4" />Tambah Produk</button>
+          <Link href="/user/vendor/products/add-product" className="inline-flex items-center gap-2 bg-c-blue text-white font-quick font-semibold text-sm px-4 py-2.5 rounded-lg min-h-[44px] hover:bg-c-blue/90 active:scale-[0.98] transition-all"><Plus className="w-4 h-4" />Tambah Produk</Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           <StatCard label="Total Produk" value={String(vendorProducts.length)} icon={<Package className="w-5 h-5" />} variant="blue" />

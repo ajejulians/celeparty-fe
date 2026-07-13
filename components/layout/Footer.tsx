@@ -6,9 +6,12 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <h4 className="font-quick font-bold text-white text-lg mb-4">
-              CELEPARTY
-            </h4>
+            <div className="flex items-center gap-2 mb-4">
+              <img src="/images/favicon.ico" alt="Celeparty Logo" className="w-6 h-6 object-contain" />
+              <h4 className="font-quick font-bold text-white text-lg">
+                CELEPARTY
+              </h4>
+            </div>
             <p className="font-sans text-sm leading-relaxed">
               Marketplace event platform — temukan dan beli jasa event terbaik
               untuk perayaan Anda.

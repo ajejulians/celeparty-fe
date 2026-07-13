@@ -22,7 +22,10 @@ export function middleware(request: NextRequest) {
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   if (!isProtected) return NextResponse.next();
 
-  if (!MOCK_SESSION.isAuthenticated) {
+  const isAuthenticatedCookie = request.cookies.get("is_authenticated")?.value;
+  const isAuthenticated = isAuthenticatedCookie === "true";
+
+  if (!isAuthenticated) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 

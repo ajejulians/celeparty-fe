@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useSession } from "../../lib/session";
 import { products } from "../../lib/data";
 import { TicketCard } from "../../components/product/TicketCard";
 import {
@@ -38,6 +41,9 @@ const trustMetrics = [
 ];
 
 export default function HomePage() {
+  const session = useSession();
+  const canCreateEvent = session.isAuthenticated && (session.role === "vendor" || session.role === "admin");
+
   return (
     <div className="bg-neutral-50">
       {/* Hero */}
@@ -60,12 +66,14 @@ export default function HomePage() {
               >
                 Jelajahi Marketplace
               </Link>
-              <Link
-                href="/user/vendor/dashboard"
-                className="inline-flex items-center gap-2 border-2 border-white/30 text-white font-quick font-semibold text-sm px-8 py-3 rounded-lg min-h-[44px] hover:bg-white/10 active:scale-[0.98] transition-all"
-              >
-                Buat Event
-              </Link>
+              {canCreateEvent && (
+                <Link
+                  href="/user/vendor/dashboard"
+                  className="inline-flex items-center gap-2 border-2 border-white/30 text-white font-quick font-semibold text-sm px-8 py-3 rounded-lg min-h-[44px] hover:bg-white/10 active:scale-[0.98] transition-all"
+                >
+                  Buat Event
+                </Link>
+              )}
             </div>
             <div className="relative max-w-md">
               <Search className="w-4 h-4 absolute left-3 top-3 text-white/50" />
@@ -186,6 +194,40 @@ export default function HomePage() {
             >
               Lihat Semua &rarr;
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us Banner */}
+      <section className="bg-gradient-to-r from-c-blue to-[#2A1854] py-16 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=80')] opacity-10 bg-cover bg-center mix-blend-overlay"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <h2 className="font-quick font-bold text-3xl md:text-4xl text-white mb-6">Wujudkan Event Impian Anda Bersama Celeparty</h2>
+          <p className="font-sans text-lg text-white/80 max-w-2xl mx-auto mb-10">
+            Platform terpercaya yang menghubungkan Anda dengan ribuan vendor profesional di seluruh Indonesia. Dari perencanaan hingga pelaksanaan, kami ada untuk Anda.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:-translate-y-1 transition-transform">
+              <div className="w-12 h-12 bg-c-green rounded-full flex items-center justify-center mx-auto mb-4 text-c-blue">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="font-quick font-bold text-xl text-white mb-2">Transaksi Aman</h3>
+              <p className="font-sans text-sm text-white/70">Pembayaran dijamin aman dengan sistem escrow terintegrasi.</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:-translate-y-1 transition-transform">
+              <div className="w-12 h-12 bg-c-green rounded-full flex items-center justify-center mx-auto mb-4 text-c-blue">
+                <Star className="w-6 h-6" />
+              </div>
+              <h3 className="font-quick font-bold text-xl text-white mb-2">Kualitas Terjamin</h3>
+              <p className="font-sans text-sm text-white/70">Vendor yang telah dikurasi dengan ulasan pelanggan asli.</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:-translate-y-1 transition-transform">
+              <div className="w-12 h-12 bg-c-green rounded-full flex items-center justify-center mx-auto mb-4 text-c-blue">
+                <Headphones className="w-6 h-6" />
+              </div>
+              <h3 className="font-quick font-bold text-xl text-white mb-2">Dukungan 24/7</h3>
+              <p className="font-sans text-sm text-white/70">Tim support kami siap membantu Anda kapan saja.</p>
+            </div>
           </div>
         </div>
       </section>

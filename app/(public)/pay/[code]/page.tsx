@@ -68,9 +68,7 @@ export default async function PayPage({ params }: PayPageProps) {
       <div className="max-w-md mx-auto px-4 py-12">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2.5 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-c-green to-[#A3A702] flex items-center justify-center shadow-lg">
-              <Sparkles className="w-5 h-5 text-c-blue" />
-            </div>
+            <img src="/images/favicon.ico" alt="Celeparty Logo" className="w-10 h-10 object-contain rounded-xl" />
             <span className="font-quick font-bold text-xl text-c-blue">
               CELEPARTY
             </span>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { FormField } from "../../../../components/auth/FormField";
 import { Eye, EyeOff, AlertTriangle, Check, Lock } from "lucide-react";
+import { useSession } from "../../../../lib/session";
 
 type Role = "customer" | "vendor" | "admin";
 
@@ -45,6 +46,7 @@ const ROLE_LABELS: Record<Role, string> = {
 };
 
 export default function LoginPage() {
+  const session = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -74,6 +76,7 @@ export default function LoginPage() {
       const found = MOCK_CREDENTIALS[email.toLowerCase().trim()];
       if (found && password === "rahasia123") {
         setAuthResult(found);
+        session.login(found.role!);
         setTimeout(() => {
           window.location.href = ROLE_REDIRECTS[found.role!];
         }, 1500);
@@ -92,7 +95,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12 bg-neutral-50">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 flex flex-col items-center">
+          <img src="/images/favicon.ico" alt="Celeparty Logo" className="w-12 h-12 object-contain mb-3" />
           <h1 className="font-quick font-bold text-3xl text-c-blue mb-2">
             CELEPARTY
           </h1>
