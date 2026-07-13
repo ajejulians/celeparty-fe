@@ -6,7 +6,9 @@
     "recharts": "*",
     "shadcn": "*",
     "radix-ui": "*",
-    "@phosphor-icons/react": "*"
+    "@phosphor-icons/react": "*",
+    "embla-carousel-react": "*",
+    "embla-carousel-autoplay": "*"
   },
   "scripts": {
     "dev": "next dev",
@@ -49,6 +51,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^4.1.0",
+    "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.42.2",
     "lucide-react": "^0.400.0",
     "next": "^16.2.10",
     "next-themes": "^0.4.6",
@@ -67,6 +71,7 @@
     "typescript": "^5.5.0",
     "vaul": "^1.1.2",
     "xlsx": "^0.18.5",
-    "zod": "^4.2.1"
+    "zod": "^4.2.1",
+    "zustand": "^5.0.14"
   }
 }
