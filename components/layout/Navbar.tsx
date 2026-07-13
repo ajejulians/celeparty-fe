@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { Search, Menu, X, ChevronRight, Sparkles, User, Settings, LogOut, ChevronDown } from "lucide-react";
+import { Search, Menu, Sparkles, User, Settings, LogOut, ChevronDown, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "@/lib/session";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const session = useSession();
   const isLoggedIn = session.isAuthenticated;
@@ -26,30 +28,9 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
-  // Effect to handle navbar styling on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Close mobile menu on route change and lock body scroll when open
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
-
-  useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [mobileOpen]);
 
   const navLinks = [
     { name: "Beranda", path: "/" },
@@ -58,221 +39,217 @@ export function Navbar() {
     { name: "Blog", path: "/blog" },
   ];
 
+  const isActive = (path: string) => {
+    if (path === "/") return pathname === "/";
+    return pathname.startsWith(path);
+  };
+
   return (
-    <>
-      <header 
-        className={`sticky top-0 z-[60] transition-all duration-300 border-b ${
-          scrolled 
-            ? "bg-c-blue/90 backdrop-blur-lg border-white/10 shadow-xl py-2" 
-            : "bg-c-blue border-transparent py-3 md:py-4"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 gap-4 md:gap-8">
-            
-            {/* Logo */}
-            <Link 
-              href="/"
-              className="flex items-center gap-2.5 font-quick font-bold text-2xl text-white tracking-wide shrink-0 group"
-            >
-              <img src="/images/favicon.ico" alt="Celeparty Logo" className="w-9 h-9 object-contain group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 rounded-xl" />
-              CELEPARTY
-            </Link>
+    <header className="sticky top-0 z-50 bg-c-blue/80 backdrop-blur-md border-b border-white/10 shadow-xl py-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 gap-4 md:gap-8">
 
-            {/* Desktop Nav Links */}
-            <nav className="hidden md:flex items-center gap-8 shrink-0">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.path}
-                  className="relative font-quick font-semibold text-sm text-white/80 hover:text-white py-2 group transition-colors"
-                >
-                  {link.name}
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-c-green transition-all duration-300 group-hover:w-full rounded-full opacity-0 group-hover:opacity-100"></span>
-                </Link>
-              ))}
-            </nav>
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 font-quick font-bold text-2xl text-white tracking-wide shrink-0 group"
+          >
+            <img src="/images/favicon.ico" alt="Celeparty Logo" className="w-9 h-9 object-contain group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 rounded-xl" />
+            CELEPARTY
+          </Link>
 
-            {/* Search and CTA Container */}
-            <div className="hidden md:flex flex-1 justify-end items-center gap-6">
-              {!isLanding && (
-                <div className="relative w-full max-w-sm group">
-                  <input
-                    type="text"
-                    placeholder="Cari event, vendor..."
-                    className="w-full pl-11 pr-4 py-2.5 text-sm font-sans rounded-full bg-white/10 text-white placeholder:text-white/60 border border-white/10 focus:outline-none focus:border-c-green/50 focus:bg-white/15 focus:ring-4 focus:ring-c-green/20 transition-all duration-300"
-                  />
-                  <span className="absolute left-4 top-2.5 text-white/50 group-focus-within:text-c-green transition-colors">
-                    <Search size={18} />
-                  </span>
-                </div>
-              )}
-              
-              {isLoggedIn ? (
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-c-green/30"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-c-blue-50 flex items-center justify-center overflow-hidden border-2 border-c-green">
-                      <User size={18} className="text-c-blue" />
-                    </div>
-                    <span className="text-sm font-quick font-semibold text-white max-w-[100px] truncate">
-                      Hi, Budi
-                    </span>
-                    <ChevronDown size={16} className={`text-white/70 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
-                  </button>
-                  
-                  {/* Dropdown Menu */}
-                  {dropdownOpen && (
-                    <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
-                      <div className="px-4 py-3 border-b border-neutral-100">
-                        <p className="text-sm font-quick font-bold text-neutral-900">Budi Santoso</p>
-                        <p className="text-xs font-sans text-neutral-500 truncate">budi@example.com</p>
-                      </div>
-                      <div className="py-2">
-                        <Link href="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
-                          <User size={18} /> Profile
-                        </Link>
-                        <Link href="/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
-                          <Settings size={18} /> Settings
-                        </Link>
-                        <Link href="/bookings" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
-                          <Settings size={18} /> Bookings
-                        </Link>
-                      </div>
-                      <div className="border-t border-neutral-100 py-2">
-                        <button 
-                          onClick={() => {
-                            setDropdownOpen(false);
-                            session.logout();
-                            window.location.href = "/";
-                          }}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-red-600 hover:bg-red-50 transition-colors"
-                        >
-                          <LogOut size={18} /> Keluar
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  href="/auth/login"
-                  className="font-quick font-semibold text-sm bg-c-green text-neutral-900 px-7 py-2.5 rounded-full inline-flex items-center gap-2 hover:bg-[#e4e91f] hover:shadow-[0_0_24px_rgba(203,208,2,0.5)] active:scale-95 transition-all duration-300 shrink-0"
-                >
-                  Mulai Sekarang
-                  <ChevronRight size={16} className="text-neutral-900" />
-                </Link>
-              )}
-            </div>
-
-            {/* Mobile Menu Toggle */}
-            <button
-              className="md:hidden text-white p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl hover:bg-white/10 active:scale-95 transition-all z-[70]"
-              aria-label="Menu"
-              aria-expanded={mobileOpen}
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? <X size={26} /> : <Menu size={26} />}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile Menu Overlay */}
-      <div 
-        className={`fixed inset-0 z-[50] bg-c-blue/98 backdrop-blur-2xl transition-all duration-500 md:hidden flex flex-col pt-[88px] ${
-          mobileOpen 
-            ? "opacity-100 pointer-events-auto translate-x-0" 
-            : "opacity-0 pointer-events-none translate-x-12"
-        }`}
-      >
-        <div className="flex flex-col p-6 gap-8 h-full overflow-y-auto">
-          {!isLanding && (
-            <div className="relative w-full shadow-lg">
-              <input
-                type="text"
-                placeholder="Cari event, vendor..."
-                className="w-full pl-12 pr-4 py-4 text-base font-sans rounded-2xl bg-white/10 text-white placeholder:text-white/50 border border-white/10 focus:outline-none focus:border-c-green focus:bg-white/15 transition-all"
-              />
-              <span className="absolute left-4 top-4 text-white/50">
-                <Search size={22} />
-              </span>
-            </div>
-          )}
-
-          <nav className="flex flex-col gap-2">
-            {navLinks.map((link, i) => (
+          <nav className="hidden md:flex items-center gap-8 shrink-0">
+            {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.path}
-                onClick={() => setMobileOpen(false)}
-                className="font-quick font-bold text-3xl text-white/90 hover:text-c-green hover:translate-x-4 transition-all duration-300 flex items-center justify-between py-4 border-b border-white/5"
-                style={{ transitionDelay: `${i * 50}ms` }}
+                className={cn(
+                  "relative font-quick font-semibold text-sm py-2 transition-colors duration-200",
+                  isActive(link.path)
+                    ? "text-white"
+                    : "text-purple-100 hover:text-white"
+                )}
               >
                 {link.name}
-                <ChevronRight size={28} className="opacity-30" />
+                {isActive(link.path) && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-c-green rounded-full" />
+                )}
               </Link>
             ))}
           </nav>
 
-            {isLoggedIn ? (
-              <div className="mt-auto pt-6 pb-12 border-t border-white/10 space-y-2">
-                <div className="flex items-center gap-4 mb-6 px-2">
-                  <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-c-green">
-                    <User size={28} className="text-c-blue" />
-                  </div>
-                  <div>
-                    <p className="font-quick font-bold text-xl text-white">Budi Santoso</p>
-                    <p className="font-sans text-sm text-white/60">budi@example.com</p>
-                  </div>
-                </div>
-                <Link
-                  href="/profile"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-white/90 hover:bg-white/10 hover:text-white transition-all"
-                >
-                  <User size={22} className="text-c-green" /> Profile
-                </Link>
-                <Link
-                  href="/settings"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-white/90 hover:bg-white/10 hover:text-white transition-all"
-                >
-                  <Settings size={22} className="text-c-green" /> Settings
-                </Link>
-                <Link
-                  href="/bookings"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-white/90 hover:bg-white/10 hover:text-white transition-all"
-                >
-                  <Settings size={22} className="text-c-green" /> Bookings
-                </Link>
-                <button
-                  onClick={() => {
-                    setMobileOpen(false);
-                    session.logout();
-                    window.location.href = "/";
-                  }}
-                  className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl font-quick font-semibold text-lg text-red-400 hover:bg-white/10 hover:text-red-300 transition-all text-left"
-                >
-                  <LogOut size={22} /> Keluar
-                </button>
-              </div>
-            ) : (
-              <div className="mt-auto pt-8 pb-12">
-                <Link
-                  href="/auth/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="w-full font-quick font-bold text-lg bg-c-green text-neutral-900 px-6 py-5 rounded-2xl flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_30px_rgba(203,208,2,0.3)]"
-                >
-                  Mulai Sekarang <Sparkles className="w-5 h-5" />
-                </Link>
+          <div className="hidden md:flex flex-1 justify-end items-center gap-6">
+            {!isLanding && (
+              <div className="relative w-full max-w-sm group">
+                <input
+                  type="text"
+                  placeholder="Cari event, vendor..."
+                  className="w-full pl-11 pr-4 py-2.5 text-sm font-sans rounded-full bg-white/10 text-white placeholder:text-white/60 border border-white/10 focus:outline-none focus:border-c-green/50 focus:bg-white/15 focus:ring-4 focus:ring-c-green/20 transition-all duration-300"
+                />
+                <span className="absolute left-4 top-2.5 text-white/50 group-focus-within:text-c-green transition-colors">
+                  <Search size={18} />
+                </span>
               </div>
             )}
+
+            {isLoggedIn ? (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-c-green/30"
+                >
+                  <div className="w-8 h-8 rounded-full bg-c-blue-50 flex items-center justify-center overflow-hidden border-2 border-c-green">
+                    <User size={18} className="text-c-blue" />
+                  </div>
+                  <span className="text-sm font-quick font-semibold text-white max-w-[100px] truncate">
+                    Hi, Budi
+                  </span>
+                  <ChevronDown size={16} className={`text-white/70 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
+                    <div className="px-4 py-3 border-b border-neutral-100">
+                      <p className="text-sm font-quick font-bold text-neutral-900">Budi Santoso</p>
+                      <p className="text-xs font-sans text-neutral-500 truncate">budi@example.com</p>
+                    </div>
+                    <div className="py-2">
+                      <Link href="/profile" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
+                        <User size={18} /> Profile
+                      </Link>
+                      <Link href="/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
+                        <Settings size={18} /> Settings
+                      </Link>
+                      <Link href="/bookings" className="flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-neutral-700 hover:bg-neutral-50 hover:text-c-blue transition-colors">
+                        <Settings size={18} /> Bookings
+                      </Link>
+                    </div>
+                    <div className="border-t border-neutral-100 py-2">
+                      <button
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          session.logout();
+                          window.location.href = "/";
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        <LogOut size={18} /> Keluar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="font-quick font-semibold text-sm bg-c-green text-neutral-900 px-7 py-2.5 rounded-full inline-flex items-center gap-2 hover:bg-[#e4e91f] hover:shadow-[0_0_24px_rgba(203,208,2,0.5)] active:scale-95 transition-all duration-300 shrink-0"
+              >
+                Mulai Sekarang
+                <ChevronRight size={16} className="text-neutral-900" />
+              </Link>
+            )}
+          </div>
+
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden text-white hover:bg-white/10"
+                aria-label="Menu"
+              >
+                <Menu size={26} />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[80vw] sm:w-[350px] bg-c-blue border-white/10 p-0 pt-0">
+              <div className="flex flex-col h-full">
+                <div className="flex items-center gap-2.5 px-6 py-5 border-b border-white/10">
+                  <img src="/images/favicon.ico" alt="Celeparty Logo" className="w-8 h-8 object-contain rounded-lg" />
+                  <span className="font-quick font-bold text-xl text-white">CELEPARTY</span>
+                </div>
+
+                {!isLanding && (
+                  <div className="px-4 py-4">
+                    <div className="relative w-full">
+                      <input
+                        type="text"
+                        placeholder="Cari event, vendor..."
+                        className="w-full pl-12 pr-4 py-3 text-sm font-sans rounded-xl bg-white/10 text-white placeholder:text-white/50 border border-white/10 focus:outline-none focus:border-c-green focus:bg-white/15 transition-all"
+                      />
+                      <span className="absolute left-4 top-3 text-white/50">
+                        <Search size={20} />
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <nav className="flex flex-col flex-1 px-3 py-4 gap-1 overflow-y-auto">
+                  {navLinks.map((link) => (
+                    <SheetClose key={link.name} asChild>
+                      <Link
+                        href={link.path}
+                        className={cn(
+                          "font-quick font-semibold text-lg py-4 px-4 rounded-xl transition-all duration-200 flex items-center justify-between",
+                          isActive(link.path)
+                            ? "text-white bg-white/10"
+                            : "text-purple-100 hover:text-white hover:bg-white/5"
+                        )}
+                      >
+                        {link.name}
+                        <ChevronRight size={20} className="opacity-50" />
+                      </Link>
+                    </SheetClose>
+                  ))}
+                </nav>
+
+                <div className="px-4 py-6 border-t border-white/10 mt-auto">
+                  {isLoggedIn ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3 mb-4 px-2">
+                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-c-green">
+                          <User size={20} className="text-c-blue" />
+                        </div>
+                        <div>
+                          <p className="font-quick font-bold text-sm text-white">Budi Santoso</p>
+                          <p className="font-sans text-xs text-white/60">budi@example.com</p>
+                        </div>
+                      </div>
+                      <SheetClose asChild>
+                        <Link href="/profile" className="flex items-center gap-3 px-4 py-3 rounded-xl font-quick font-semibold text-sm text-purple-100 hover:bg-white/10 hover:text-white transition-all">
+                          <User size={18} className="text-c-green" /> Profile
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link href="/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl font-quick font-semibold text-sm text-purple-100 hover:bg-white/10 hover:text-white transition-all">
+                          <Settings size={18} className="text-c-green" /> Settings
+                        </Link>
+                      </SheetClose>
+                      <button
+                        onClick={() => {
+                          setMobileOpen(false);
+                          session.logout();
+                          window.location.href = "/";
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-quick font-semibold text-sm text-red-400 hover:bg-white/10 hover:text-red-300 transition-all"
+                      >
+                        <LogOut size={18} /> Keluar
+                      </button>
+                    </div>
+                  ) : (
+                    <SheetClose asChild>
+                      <Link
+                        href="/auth/login"
+                        className="w-full font-quick font-bold text-base bg-c-green text-neutral-900 px-6 py-4 rounded-2xl flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_30px_rgba(203,208,2,0.3)]"
+                      >
+                        Mulai Sekarang <Sparkles className="w-5 h-5" />
+                      </Link>
+                    </SheetClose>
+                  )}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-    </>
+    </header>
   );
 }
