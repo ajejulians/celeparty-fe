@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { orders } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
-import { CheckCircle2, Clock, Ticket } from "lucide-react";
+import { CheckCircle2, Clock, Ticket, ChevronLeft } from "lucide-react";
 
 export default function BookingsPage() {
   const [filter, setFilter] = useState("Semua");
@@ -22,6 +23,11 @@ export default function BookingsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-screen">
+      <Link href="/" className="inline-flex items-center gap-2 text-neutral-500 hover:text-c-blue transition-colors font-sans text-sm mb-6">
+        <ChevronLeft className="w-4 h-4" />
+        Kembali ke Beranda
+      </Link>
+      
       <h1 className="font-quick font-bold text-3xl text-neutral-900 mb-6">Booking Saya</h1>
       
       {/* Filters */}
@@ -50,45 +56,45 @@ export default function BookingsPage() {
           </div>
         ) : (
           filteredOrders.map(order => (
-            <div key={order.id} className="bg-white rounded-2xl border border-neutral-200 p-6 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center hover:shadow-card-hover transition-all">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-xs font-sans text-neutral-500 font-medium bg-neutral-100 px-2.5 py-1 rounded-full">
-                    {order.orderId}
-                  </span>
-                  <span className="text-xs font-sans text-neutral-500">
-                    {new Date(order.orderDate).toLocaleDateString('id-ID')}
+            <Link href={`/bookings/${order.id}`} key={order.id} className="block group">
+              <div className="bg-white rounded-2xl border border-neutral-200 p-6 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center group-hover:shadow-card-hover group-hover:border-c-blue/30 transition-all">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-xs font-sans text-neutral-500 font-medium bg-neutral-100 px-2.5 py-1 rounded-full group-hover:bg-c-blue-50 group-hover:text-c-blue transition-colors">
+                      {order.orderId}
+                    </span>
+                    <span className="text-xs font-sans text-neutral-500">
+                      {new Date(order.orderDate).toLocaleDateString('id-ID')}
+                    </span>
+                  </div>
+                  <h3 className="font-quick font-bold text-lg text-neutral-900 mb-1 group-hover:text-c-blue transition-colors">{order.product}</h3>
+                  <p className="font-sans text-sm text-neutral-500 mb-2">Variant: {order.variant} • Qty: {order.qty}</p>
+                  <div className="flex items-center gap-2">
+                    {order.paymentStatus === "pending" ? (
+                      <span className="flex items-center gap-1.5 text-xs font-sans text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
+                        <Clock className="w-3.5 h-3.5" /> Menunggu Pembayaran
+                      </span>
+                    ) : order.paymentStatus === "settlement" && order.vendorStatus === "pending" ? (
+                      <span className="flex items-center gap-1.5 text-xs font-sans text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Dibayar
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-xs font-sans text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Selesai
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="text-left md:text-right w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0 border-neutral-100 flex flex-col md:items-end justify-center">
+                  <p className="text-sm font-sans text-neutral-500 mb-1">Total Belanja</p>
+                  <p className="font-quick font-bold text-xl text-c-blue">{formatCurrency(order.total)}</p>
+                  <span className="mt-2 text-xs font-quick font-bold text-c-blue opacity-0 group-hover:opacity-100 transition-opacity">
+                    Lihat Detail &rarr;
                   </span>
                 </div>
-                <h3 className="font-quick font-bold text-lg text-neutral-900 mb-1">{order.product}</h3>
-                <p className="font-sans text-sm text-neutral-500 mb-2">Variant: {order.variant} • Qty: {order.qty}</p>
-                <div className="flex items-center gap-2">
-                  {order.paymentStatus === "pending" ? (
-                    <span className="flex items-center gap-1.5 text-xs font-sans text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
-                      <Clock className="w-3.5 h-3.5" /> Menunggu Pembayaran
-                    </span>
-                  ) : order.paymentStatus === "settlement" && order.vendorStatus === "pending" ? (
-                    <span className="flex items-center gap-1.5 text-xs font-sans text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Dibayar
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1.5 text-xs font-sans text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Selesai
-                    </span>
-                  )}
-                </div>
               </div>
-              
-              <div className="text-left md:text-right w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0 border-neutral-100">
-                <p className="text-sm font-sans text-neutral-500 mb-1">Total Belanja</p>
-                <p className="font-quick font-bold text-xl text-c-blue">{formatCurrency(order.total)}</p>
-                {order.paymentStatus === "pending" && (
-                  <button className="mt-3 w-full md:w-auto px-6 py-2 bg-c-green text-neutral-900 font-quick font-semibold text-sm rounded-lg hover:brightness-95 transition-all">
-                    Bayar Sekarang
-                  </button>
-                )}
-              </div>
-            </div>
+            </Link>
           ))
         )}
       </div>

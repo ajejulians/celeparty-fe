@@ -38,9 +38,16 @@ export function TicketCard({
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute top-2 left-2">
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute top-2 left-2 flex flex-col gap-2">
           <StatusBadge status={product.status} />
+        </div>
+        {/* Dynamic Badge for Rating & Sales */}
+        <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
+          <span className="text-c-orange text-xs">⭐</span>
+          <span className="font-quick font-bold text-xs text-neutral-800">4.9</span>
+          <span className="w-0.5 h-3 bg-neutral-300 mx-0.5" />
+          <span className="font-sans text-[10px] text-neutral-600 font-medium">Terjual 40+</span>
         </div>
       </div>
 
