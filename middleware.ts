@@ -4,30 +4,40 @@ const ADMIN_PATHS = ["/user/admin"];
 const VENDOR_PATHS = ["/user/vendor"];
 const PROTECTED_PATHS = [...ADMIN_PATHS, ...VENDOR_PATHS];
 
-const MOCK_SESSION = {
-  role: "vendor" as "admin" | "vendor" | "customer",
-  vendorId: "v-001",
-  vendorName: "Jakarta Audio Pro",
-  storeInitials: "JA",
-  isAuthenticated: true,
-};
+interface SessionHeaders {
+  "x-user-role": "admin" | "vendor" | "customer";
+  "x-vendor-id": string;
+  "x-is-authenticated": "true" | "false";
+}
+
+function getRole(allowedRoles: string[], raw?: string): "admin" | "vendor" | "customer" {
+  if (raw && allowedRoles.includes(raw)) return raw as "admin" | "vendor" | "customer";
+  return "customer";
+}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  // For testing purposes, get role from cookie or fallback to vendor
-  const roleCookie = request.cookies.get("simulate_role")?.value;
-  const role = (roleCookie as "admin" | "vendor" | "customer") || "vendor";
 
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
-  if (!isProtected) return NextResponse.next();
+  if (!isProtected) {
+    const response = NextResponse.next();
+    response.headers.set("x-is-authenticated", "false");
+    response.headers.set("x-user-role", "customer");
+    return response;
+  }
 
   const isAuthenticatedCookie = request.cookies.get("is_authenticated")?.value;
   const isAuthenticated = isAuthenticatedCookie === "true";
 
   if (!isAuthenticated) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+    const loginUrl = new URL("/auth/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
   }
+
+  const roleCookie = request.cookies.get("simulate_role")?.value;
+  const vendorIdCookie = request.cookies.get("vendor_id")?.value;
+  const role = getRole(["admin", "vendor", "customer"], roleCookie);
 
   const isAdminPath = ADMIN_PATHS.some((p) => pathname.startsWith(p));
   const isVendorPath = VENDOR_PATHS.some((p) => pathname.startsWith(p));
@@ -41,8 +51,10 @@ export function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next();
-  response.headers.set("x-vendor-id", MOCK_SESSION.vendorId);
+  const vendorId = vendorIdCookie ?? "";
   response.headers.set("x-user-role", role);
+  response.headers.set("x-vendor-id", vendorId);
+  response.headers.set("x-is-authenticated", "true");
   return response;
 }
 

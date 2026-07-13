@@ -107,16 +107,17 @@ export function getOrderById(orderId: string): Order | null {
   return mockOrders.get(orderId) ?? null;
 }
 
-export function createPaymentLink(orderId: string, productSlug: string, variantIndex: number): PaymentLink | null {
+export function createPaymentLink(orderId: string, productSlug: string, variantIndex: number, qty: number = 1): PaymentLink | null {
   const product = getProductBySlug(productSlug);
   if (!product) return null;
 
   const variant = product.variants[variantIndex];
   if (!variant) return null;
 
+  const totalAmount = variant.price * qty;
   const isEscrow = product.status === "escrow_badge";
-  const dp = Math.ceil(variant.price * 0.3);
-  const remaining = Math.floor(variant.price * 0.7);
+  const dp = Math.ceil(totalAmount * 0.3);
+  const remaining = Math.floor(totalAmount * 0.7);
 
   const code = `PAY-${Date.now().toString(36).toUpperCase()}`;
 
@@ -150,7 +151,7 @@ export function createPaymentLink(orderId: string, productSlug: string, variantI
       code,
       productSlug,
       variantIndex,
-      amount: variant.price,
+      amount: totalAmount,
       type: "full",
       validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       orderId,
