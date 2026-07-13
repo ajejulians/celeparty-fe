@@ -1,15 +1,35 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Product } from "../../lib/data";
-import { formatCurrency, formatDate } from "../../lib/utils";
-import { StatusBadge } from "../feedback/StatusBadge";
-import { cn } from "../../lib/utils";
+import { Product } from "@/lib/data";
+import { formatCurrency, formatDate, cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
+const STATUS_MAP: Record<string, { label: string; className: string }> = {
+  active: { label: "Aktif", className: "bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-emerald-200" },
+  sold_out: { label: "Habis", className: "bg-rose-100 text-rose-800 hover:bg-rose-100 border-rose-200" },
+  escrow_badge: { label: "Escrow", className: "bg-amber-100 text-amber-800 hover:bg-amber-100 border-amber-200" },
+};
 
 interface TicketCardProps {
   product: Product;
   variant?: "catalog" | "compact" | "landing";
   className?: string;
   priority?: boolean;
+}
+
+function PriceDisplay({ amount, compact }: { amount: number; compact?: boolean }) {
+  return (
+    <div className="flex items-baseline gap-0.5">
+      <span className={cn("font-quick font-semibold text-neutral-500", compact ? "text-[11px]" : "text-xs")}>Rp</span>
+      <span className={cn("font-quick font-bold text-c-blue", compact ? "text-sm" : "text-lg")}>
+        {amount.toLocaleString("id-ID")}
+      </span>
+      {!compact && (
+        <span className="text-xs font-sans text-neutral-500 ml-1">&middot; mulai dari</span>
+      )}
+    </div>
+  );
 }
 
 export function TicketCard({
@@ -25,25 +45,28 @@ export function TicketCard({
     <Link
       href={`/products/${product.slug}`}
       className={cn(
-        "group bg-white rounded-lg shadow-card border border-neutral-100 overflow-hidden transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 cursor-pointer block",
+        "group bg-white rounded-xl shadow-card border border-neutral-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-c-blue-100/30 hover:-translate-y-1 cursor-pointer block",
         className
       )}
     >
       <div className="relative aspect-[4/3] bg-neutral-100 overflow-hidden">
-        <Image 
-          src={product.imageUrl} 
+        <Image
+          src={product.imageUrl}
           alt={product.name}
           fill
           priority={priority}
           className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute top-2 left-2 flex flex-col gap-2">
-          <StatusBadge status={product.status} />
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
+          {STATUS_MAP[product.status] && (
+            <Badge className={STATUS_MAP[product.status].className}>
+              {STATUS_MAP[product.status].label}
+            </Badge>
+          )}
         </div>
-        {/* Dynamic Badge for Rating & Sales */}
-        <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
+        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
           <span className="text-c-orange text-xs">⭐</span>
           <span className="font-quick font-bold text-xs text-neutral-800">4.9</span>
           <span className="w-0.5 h-3 bg-neutral-300 mx-0.5" />
@@ -51,15 +74,13 @@ export function TicketCard({
         </div>
       </div>
 
-      <div className={cn(isCompact ? "p-3" : "p-4")}>
-        <p
-          className={cn(
-            "text-neutral-500 mb-1",
-            isCompact ? "text-xs font-sans" : "text-xs font-sans"
-          )}
-        >
-          {product.category} &middot; {product.city}
-        </p>
+      <div className={cn("p-4 space-y-2", isCompact && "p-3 space-y-1.5")}>
+        <div className="flex items-center gap-1 text-neutral-500 mb-1 flex-wrap">
+          <span className={cn("font-sans", isCompact ? "text-[11px]" : "text-xs")}>{product.category}</span>
+          <span className="text-neutral-300">&middot;</span>
+          <span className={cn("font-sans", isCompact ? "text-[11px]" : "text-xs")}>{product.city}</span>
+        </div>
+
         <h3
           className={cn(
             "font-quick font-semibold text-neutral-900 leading-snug line-clamp-2 group-hover:text-c-blue transition-colors",
@@ -69,36 +90,33 @@ export function TicketCard({
           {product.name}
         </h3>
 
+        <div className="flex items-center justify-between">
+          <PriceDisplay amount={product.priceFrom} compact={isCompact} />
+        </div>
+
         {!isLanding && (
-          <p className="text-xs font-sans text-neutral-500 mt-1.5">
-            &#x1F4C5; {formatDate(product.date)}
-          </p>
+          <div className="pt-1">
+            <Button
+              variant="default"
+              size={isCompact ? "sm" : "default"}
+              className={cn(
+                "w-full bg-purple-600 hover:bg-purple-700 text-white",
+                isCompact && "h-8 text-xs"
+              )}
+            >
+              Lihat Detail
+            </Button>
+          </div>
         )}
 
-        {isCompact ? (
-          <div className="mt-2 flex items-center justify-between">
-            <div>
-              <p className="text-xs text-neutral-500">Mulai dari</p>
-              <p className="font-quick font-bold text-base text-c-blue">
-                {formatCurrency(product.priceFrom)}
-              </p>
-            </div>
-            <span className="font-quick font-semibold text-xs text-neutral-500 group-hover:text-c-blue transition-colors">
-              Lihat &rarr;
-            </span>
-          </div>
-        ) : (
-          <div className="mt-3 flex items-center justify-between">
-            <div>
-              <p className="text-xs text-neutral-500">Mulai dari</p>
-              <p className="font-quick font-bold text-lg text-c-blue">
-                {formatCurrency(product.priceFrom)}
-              </p>
-            </div>
-            <span className="bg-c-green text-neutral-900 font-quick font-semibold text-sm px-4 py-2 rounded-lg hover:brightness-95 active:scale-[0.98] transition-all min-h-[44px] inline-flex items-center">
-              Lihat
-            </span>
-          </div>
+        {isLanding && (
+          <Button
+            variant="default"
+            size="sm"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 mt-2"
+          >
+            Detail
+          </Button>
         )}
       </div>
     </Link>
