@@ -12,7 +12,7 @@ export interface SessionUser {
 
 interface SessionContextType extends SessionUser {
   logout: () => void;
-  login: () => void;
+  login: (role?: "admin" | "vendor" | "customer") => void;
 }
 
 const MOCK_SESSION: SessionUser = {
@@ -26,7 +26,7 @@ const MOCK_SESSION: SessionUser = {
 const SessionContext = createContext<SessionContextType>({
   ...MOCK_SESSION,
   logout: () => {},
-  login: () => {},
+  login: (role?: "admin" | "vendor" | "customer") => {},
 });
 
 export function SessionProvider({ children }: { children: ReactNode }) {

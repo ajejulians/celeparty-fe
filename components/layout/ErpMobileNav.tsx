@@ -1,15 +1,10 @@
 "use client";
 
 import { cn } from "../../lib/utils";
-
-export interface MobileNavItem {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-}
+import type { NavItem } from "../../lib/navigation";
 
 interface ErpMobileNavProps {
-  items: MobileNavItem[];
+  items: NavItem[];
   activePath?: string;
 }
 

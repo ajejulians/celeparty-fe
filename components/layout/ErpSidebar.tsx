@@ -1,23 +1,6 @@
-import {
-  LayoutDashboard,
-  Package,
-  Ticket,
-  ClipboardList,
-  Wallet,
-  User,
-  LogOut,
-  Store,
-  Users,
-  BarChart3,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import { cn } from "../../lib/utils";
-
-export interface NavItem {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-  badge?: number;
-}
+import type { NavItem } from "../../lib/navigation";
 
 interface ErpSidebarProps {
   storeName: string;
