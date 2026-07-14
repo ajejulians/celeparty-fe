@@ -12,6 +12,9 @@ import {
   Wallet,
   User,
   ShoppingBag,
+  ListTodo,
+  PlusCircle,
+  ScanFace,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -20,9 +23,19 @@ export interface NavItem {
   icon: ReactNode;
   label: string;
   badge?: number;
+  children?: NavItem[];
 }
 
 export type Role = "admin" | "vendor" | "customer";
+
+export function getActiveChildPaths(items: NavItem[]): string[] {
+  const paths: string[] = [];
+  for (const item of items) {
+    paths.push(item.href);
+    if (item.children) paths.push(...getActiveChildPaths(item.children));
+  }
+  return paths;
+}
 
 const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: "/user/admin/dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
@@ -38,7 +51,16 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
 const VENDOR_NAV_ITEMS: NavItem[] = [
   { href: "/user/vendor/dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
   { href: "/user/vendor/products", icon: <Package className="w-5 h-5" />, label: "Produk & Jasa" },
-  { href: "/user/vendor/tickets", icon: <Ticket className="w-5 h-5" />, label: "Tiket Event" },
+  {
+    href: "/user/vendor/tickets",
+    icon: <Ticket className="w-5 h-5" />,
+    label: "Tiket Event",
+    children: [
+      { href: "/user/vendor/tickets", icon: <ListTodo className="w-4 h-4" />, label: "Daftar Event" },
+      { href: "/user/vendor/tickets/create", icon: <PlusCircle className="w-4 h-4" />, label: "Buat Event" },
+      { href: "/user/vendor/tickets/gate", icon: <ScanFace className="w-4 h-4" />, label: "Scan" },
+    ],
+  },
   { href: "/user/vendor/orders", icon: <ClipboardList className="w-5 h-5" />, label: "Pesanan Masuk", badge: 2 },
   { href: "/user/vendor/wallet", icon: <Wallet className="w-5 h-5" />, label: "Wallet & Saldo" },
   { href: "/user/vendor/profile", icon: <User className="w-5 h-5" />, label: "Profil Toko" },

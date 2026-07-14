@@ -29,6 +29,7 @@ export default function CKEditorComponent({ value, onChange }: CKEditorComponent
       <CKEditor
         editor={ClassicEditor}
         config={{
+          licenseKey: "GPL",
           plugins: [
             Essentials,
             Bold,
