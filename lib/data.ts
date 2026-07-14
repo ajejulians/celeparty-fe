@@ -6,6 +6,8 @@ export interface Product {
   date: string;
   imageUrl: string;
   priceFrom: number;
+  rentalUnit: "Hari" | "Event" | "Bulan";
+  isNegotiable: boolean;
   status: "active" | "sold_out" | "escrow_badge";
   variants: { name: string; price: number }[];
   description: string;
@@ -40,6 +42,8 @@ export const products: Product[] = [
     date: "2026-08-12",
     imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&h=450&fit=crop",
     priceFrom: 2500000,
+    rentalUnit: "Hari",
+    isNegotiable: true,
     status: "active",
     variants: [
       { name: "Reguler", price: 2500000 },
@@ -55,8 +59,10 @@ export const products: Product[] = [
     category: "Fotografi",
     city: "Bandung",
     date: "2026-09-05",
-    imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&h=450&fit=crop",
+    imageUrl: "",
     priceFrom: 3500000,
+    rentalUnit: "Event",
+    isNegotiable: false,
     status: "active",
     variants: [
       { name: "4 Jam", price: 3500000 },
@@ -74,6 +80,8 @@ export const products: Product[] = [
     date: "2026-10-20",
     imageUrl: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=450&fit=crop",
     priceFrom: 15000000,
+    rentalUnit: "Event",
+    isNegotiable: true,
     status: "escrow_badge",
     variants: [
       { name: "Paket Basic", price: 15000000 },
@@ -91,6 +99,8 @@ export const products: Product[] = [
     date: "2026-08-28",
     imageUrl: "https://images.unsplash.com/photo-1555244162-803834f70033?w=600&h=450&fit=crop",
     priceFrom: 8500000,
+    rentalUnit: "Event",
+    isNegotiable: true,
     status: "active",
     variants: [
       { name: "Menu Nusantara", price: 8500000 },
@@ -106,8 +116,10 @@ export const products: Product[] = [
     category: "Entertainment",
     city: "Yogyakarta",
     date: "2026-09-15",
-    imageUrl: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600&h=450&fit=crop",
+    imageUrl: "",
     priceFrom: 2000000,
+    rentalUnit: "Event",
+    isNegotiable: false,
     status: "active",
     variants: [
       { name: "3 Jam", price: 2000000 },
@@ -125,6 +137,8 @@ export const products: Product[] = [
     date: "2026-11-01",
     imageUrl: "https://images.unsplash.com/photo-1496843916299-590492c751f4?w=600&h=450&fit=crop",
     priceFrom: 5000000,
+    rentalUnit: "Event",
+    isNegotiable: false,
     status: "sold_out",
     variants: [
       { name: "Reguler (3 Jam)", price: 5000000 },
@@ -142,6 +156,8 @@ export const products: Product[] = [
     date: "2026-08-20",
     imageUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=450&fit=crop",
     priceFrom: 4000000,
+    rentalUnit: "Hari",
+    isNegotiable: true,
     status: "active",
     variants: [
       { name: "Paket Standar", price: 4000000 },
@@ -157,8 +173,10 @@ export const products: Product[] = [
     category: "Fotografi",
     city: "Surabaya",
     date: "2026-10-10",
-    imageUrl: "https://images.unsplash.com/photo-1492724724894-7464c27d0ceb?w=600&h=450&fit=crop",
+    imageUrl: "",
     priceFrom: 4500000,
+    rentalUnit: "Event",
+    isNegotiable: true,
     status: "active",
     variants: [
       { name: "Highlight 3 Menit", price: 4500000 },
@@ -167,6 +185,44 @@ export const products: Product[] = [
     description: "Videografer dengan gaya cinematic, drone aerial, dan cinematic color grading.",
     vendorName: "Surabaya Film Works",
     vendorId: "v-003",
+  },
+  {
+    slug: "tenda-kerucut",
+    name: "Tenda Kerucut VIP 10x10",
+    category: "Sewa Alat",
+    city: "Jakarta",
+    date: "2026-08-15",
+    imageUrl: "",
+    priceFrom: 1200000,
+    rentalUnit: "Hari",
+    isNegotiable: true,
+    status: "active",
+    variants: [
+      { name: "Standar", price: 1200000 },
+      { name: "Dekor", price: 1800000 },
+    ],
+    description: "Tenda kerucut mewah kapasitas 40-60 orang, cocok untuk garden party dan acara outdoor.",
+    vendorName: "Jakarta Audio Pro",
+    vendorId: "v-001",
+  },
+  {
+    slug: "kursi-tiffany",
+    name: "Kursi Tiffany Premium",
+    category: "Sewa Alat",
+    city: "Jakarta",
+    date: "2026-09-01",
+    imageUrl: "https://images.unsplash.com/photo-1464699908537-0954e50791ee?w=600&h=450&fit=crop",
+    priceFrom: 35000,
+    rentalUnit: "Hari",
+    isNegotiable: false,
+    status: "active",
+    variants: [
+      { name: "Per Unit", price: 35000 },
+      { name: "Paket 50", price: 1500000 },
+    ],
+    description: "Kursi Tiffany elegan untuk wedding, gala dinner, dan event formal.",
+    vendorName: "Jakarta Audio Pro",
+    vendorId: "v-001",
   },
 ];
 
