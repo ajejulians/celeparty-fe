@@ -15,6 +15,7 @@ import {
   ListTodo,
   PlusCircle,
   ScanFace,
+  Activity,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -62,6 +63,7 @@ const VENDOR_NAV_ITEMS: NavItem[] = [
     ],
   },
   { href: "/user/vendor/orders", icon: <ClipboardList className="w-5 h-5" />, label: "Pesanan Masuk", badge: 2 },
+  { href: "/user/vendor/monitoring", icon: <Activity className="w-5 h-5" />, label: "Monitoring" },
   { href: "/user/vendor/wallet", icon: <Wallet className="w-5 h-5" />, label: "Wallet & Saldo" },
   { href: "/user/vendor/profile", icon: <User className="w-5 h-5" />, label: "Profil Toko" },
 ];

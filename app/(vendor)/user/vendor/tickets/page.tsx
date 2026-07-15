@@ -1,13 +1,29 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ErpHeader } from "@/components/layout/ErpHeader";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Pagination } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useSession } from "@/lib/session";
 import { getEventsByVendor, getGlobalStats, EVENT_STATUS_MAP, type VendorEvent } from "@/lib/ticket-data";
 import { formatCurrency } from "@/lib/utils";
@@ -15,6 +31,8 @@ import {
   Ticket, TrendingUp, Wallet, Search, Plus,
   Calendar, MapPin, Pencil, Monitor, Image,
 } from "lucide-react";
+
+const PAGE_SIZES = [5, 10, 20];
 
 function EventRow({ event, onMonitor }: { event: VendorEvent; onMonitor: () => void }) {
   const totalQuota = event.categories.reduce((s, c) => s + c.quota, 0);
@@ -24,8 +42,8 @@ function EventRow({ event, onMonitor }: { event: VendorEvent; onMonitor: () => v
   const st = EVENT_STATUS_MAP[event.status];
 
   return (
-    <tr className="border-b border-neutral-100 hover:bg-neutral-50/70 transition-colors group">
-      <td className="px-4 py-4">
+    <TableRow className="group">
+      <TableCell>
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
             {event.banner ? (
@@ -44,13 +62,13 @@ function EventRow({ event, onMonitor }: { event: VendorEvent; onMonitor: () => v
             </div>
           </div>
         </div>
-      </td>
-      <td className="px-4 py-4">
+      </TableCell>
+      <TableCell>
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${st.className}`}>
           {st.label}
         </span>
-      </td>
-      <td className="px-4 py-4">
+      </TableCell>
+      <TableCell>
         <div className="flex flex-col gap-1 min-w-[140px]">
           <div className="flex justify-between font-sans text-xs text-neutral-600">
             <span className="font-semibold">{totalSold.toLocaleString("id-ID")}</span>
@@ -64,21 +82,19 @@ function EventRow({ event, onMonitor }: { event: VendorEvent; onMonitor: () => v
           </div>
           <p className="font-sans text-[10px] text-neutral-400 text-right">{pct}% Terjual</p>
         </div>
-      </td>
-      <td className="px-4 py-4 font-quick font-semibold text-sm text-neutral-900 whitespace-nowrap">{formatCurrency(revenue)}</td>
-      <td className="px-4 py-4">
+      </TableCell>
+      <TableCell className="font-quick font-semibold text-sm text-neutral-900 whitespace-nowrap">{formatCurrency(revenue)}</TableCell>
+      <TableCell>
         <div className="flex items-center gap-2">
-          <Link href={`/user/vendor/tickets/create`}>
-            <Button variant="ghost" size="sm" className="font-sans text-xs gap-1 h-8 px-2.5 text-neutral-500 hover:text-c-blue">
-              <Pencil className="w-3 h-3" /> Edit
-            </Button>
+          <Link href="/user/vendor/tickets/create" className={buttonVariants({ variant: "ghost", size: "sm", className: "font-sans text-xs gap-1 h-8 px-2.5 text-neutral-500 hover:text-c-blue" })}>
+            <Pencil className="w-3 h-3" /> Edit
           </Link>
           <Button variant="outline" size="sm" onClick={onMonitor} className="font-sans text-xs gap-1 h-8 px-2.5 border-c-blue-100 text-c-blue hover:bg-c-blue-50">
             <Monitor className="w-3 h-3" /> Gate
           </Button>
         </div>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }
 
@@ -88,6 +104,8 @@ export default function TicketsDashboardPage() {
   const events = getEventsByVendor(session.vendorId);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "ongoing" | "upcoming" | "finished" | "draft">("all");
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   const stats = useMemo(() => getGlobalStats(events), [events]);
   const activeEvents = events.filter((e) => e.status === "ongoing").length;
@@ -101,6 +119,12 @@ export default function TicketsDashboardPage() {
     }
     return list;
   }, [events, statusFilter, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(pageIndex + 1, totalPages);
+  const start = (currentPage - 1) * pageSize;
+  const end = Math.min(start + pageSize, filtered.length);
+  const paginated = filtered.slice(start, end);
 
   const statusCounts = useMemo(() => {
     const all = events.length;
@@ -119,6 +143,15 @@ export default function TicketsDashboardPage() {
     finished: "Selesai",
   };
 
+  const handlePageChange = useCallback((page: number) => {
+    setPageIndex(page - 1);
+  }, []);
+
+  const handlePageSizeChange = useCallback((v: string) => {
+    setPageSize(Number(v));
+    setPageIndex(0);
+  }, []);
+
   return (
     <>
       <ErpHeader breadcrumbs={[{ label: "Dashboard", href: "/user/vendor/dashboard" }, { label: "Tiket Event" }]} />
@@ -128,10 +161,8 @@ export default function TicketsDashboardPage() {
             <h1 className="font-quick font-bold text-2xl text-neutral-900">Tiket Event</h1>
             <p className="font-sans text-sm text-neutral-500 mt-1">Kelola event dan pantau penjualan tiket Anda</p>
           </div>
-          <Link href="/user/vendor/tickets/create">
-            <Button className="font-quick font-semibold gap-2">
-              <Plus className="w-4 h-4" /> Buat Event Baru
-            </Button>
+          <Link href="/user/vendor/tickets/create" className={buttonVariants({ className: "gap-2" })}>
+            <Plus className="w-4 h-4" /> Buat Event Baru
           </Link>
         </div>
 
@@ -181,7 +212,7 @@ export default function TicketsDashboardPage() {
         </div>
 
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <Tabs value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+          <Tabs value={statusFilter} onValueChange={(v) => { setStatusFilter(v as typeof statusFilter); setPageIndex(0); }}>
             <TabsList className="bg-white border border-neutral-200 p-1 h-auto">
               {(["all", "ongoing", "upcoming", "draft", "finished"] as const).map((k) => (
                 <TabsTrigger key={k} value={k} className="font-quick text-xs py-2 data-[state=active]:bg-c-blue data-[state=active]:text-white">
@@ -195,34 +226,58 @@ export default function TicketsDashboardPage() {
           </Tabs>
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
-            <Input placeholder="Cari nama event..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-10 w-52 sm:w-64" />
+            <Input placeholder="Cari nama event..." value={search} onChange={(e) => { setSearch(e.target.value); setPageIndex(0); }} className="pl-9 h-10 w-52 sm:w-64" />
           </div>
         </div>
 
         <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
-          <table className="w-full min-w-[850px]">
-            <thead>
-              <tr className="bg-neutral-50 border-b border-neutral-200">
-                <th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Info Event</th>
-                <th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Status</th>
-                <th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Progres Penjualan</th>
-                <th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Pendapatan</th>
-                <th className="text-left text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((event) => (
-                <EventRow key={event.id} event={event} onMonitor={() => router.push(`/user/vendor/tickets/${event.id}/monitor`)} />
-              ))}
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-4 py-16 text-center font-sans text-sm text-neutral-400">
-                    {events.length === 0 ? "Belum ada event. Klik tombol Buat Event Baru untuk memulai." : "Event tidak ditemukan."}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Info Event</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Progres Penjualan</TableHead>
+                  <TableHead>Pendapatan</TableHead>
+                  <TableHead>Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginated.map((event) => (
+                  <EventRow key={event.id} event={event} onMonitor={() => router.push(`/user/vendor/tickets/${event.id}/monitor`)} />
+                ))}
+                {paginated.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center font-sans text-sm text-neutral-400 py-16">
+                      {events.length === 0 ? "Belum ada event. Klik tombol Buat Event Baru untuk memulai." : "Event tidak ditemukan."}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {filtered.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-neutral-100">
+              <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
+                <SelectTrigger className="w-20 h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAGE_SIZES.map((s) => (
+                    <SelectItem key={s} value={String(s)}>{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={filtered.length}
+                pageSize={pageSize}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>

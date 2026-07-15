@@ -13,6 +13,8 @@ export interface Product {
   description: string;
   vendorName: string;
   vendorId: string;
+  stock: number;
+  totalStock: number;
 }
 
 export interface Order {
@@ -52,6 +54,8 @@ export const products: Product[] = [
     description: "Paket sound system profesional untuk event Anda. Termasuk 2 speaker line array, mixer digital, dan teknisi berpengalaman.",
     vendorName: "Jakarta Audio Pro",
     vendorId: "v-001",
+    stock: 2,
+    totalStock: 5,
   },
   {
     slug: "fotografer-event",
@@ -71,6 +75,8 @@ export const products: Product[] = [
     description: "Jasa fotografer profesional dengan pengalaman 5+ tahun di event pernikahan, ulang tahun, dan corporate gathering.",
     vendorName: "Bandung Visual Story",
     vendorId: "v-002",
+    stock: 3,
+    totalStock: 3,
   },
   {
     slug: "dekorasi-pernikahan",
@@ -90,6 +96,8 @@ export const products: Product[] = [
     description: "Dekorasi pernikahan tema rustic lengkap dengan bunga segar, lighting, dan pelaminan custom.",
     vendorName: "Surabaya Decor House",
     vendorId: "v-003",
+    stock: 1,
+    totalStock: 10,
   },
   {
     slug: "catering-gathering",
@@ -109,6 +117,8 @@ export const products: Product[] = [
     description: "Paket catering untuk acara gathering perusahaan. Menu prasmanan lengkap dengan dessert dan minuman.",
     vendorName: "Citarasa Nusantara",
     vendorId: "v-004",
+    stock: 5,
+    totalStock: 5,
   },
   {
     slug: "mc-acara",
@@ -128,6 +138,8 @@ export const products: Product[] = [
     description: "MC berpengalaman untuk berbagai jenis acara — formal, semi-formal, hingga casual. Bisa dwi-bahasa.",
     vendorName: "Jogja Talent House",
     vendorId: "v-005",
+    stock: 2,
+    totalStock: 2,
   },
   {
     slug: "photo-booth",
@@ -147,6 +159,8 @@ export const products: Product[] = [
     description: "Photo booth 360° dengan platform putar, lighting profesional, dan instant sharing ke media sosial.",
     vendorName: "Jakarta Fun Booth",
     vendorId: "v-001",
+    stock: 0,
+    totalStock: 3,
   },
   {
     slug: "lighting-panggung",
@@ -166,6 +180,8 @@ export const products: Product[] = [
     description: "Lighting panggung lengkap dengan moving head, LED par, smoke machine, dan operator lighting.",
     vendorName: "Bandung Stage Lighting",
     vendorId: "v-002",
+    stock: 4,
+    totalStock: 8,
   },
   {
     slug: "videografer-event",
@@ -185,6 +201,8 @@ export const products: Product[] = [
     description: "Videografer dengan gaya cinematic, drone aerial, dan cinematic color grading.",
     vendorName: "Surabaya Film Works",
     vendorId: "v-003",
+    stock: 1,
+    totalStock: 4,
   },
   {
     slug: "tenda-kerucut",
@@ -204,6 +222,8 @@ export const products: Product[] = [
     description: "Tenda kerucut mewah kapasitas 40-60 orang, cocok untuk garden party dan acara outdoor.",
     vendorName: "Jakarta Audio Pro",
     vendorId: "v-001",
+    stock: 6,
+    totalStock: 20,
   },
   {
     slug: "kursi-tiffany",
@@ -223,6 +243,8 @@ export const products: Product[] = [
     description: "Kursi Tiffany elegan untuk wedding, gala dinner, dan event formal.",
     vendorName: "Jakarta Audio Pro",
     vendorId: "v-001",
+    stock: 30,
+    totalStock: 100,
   },
 ];
 

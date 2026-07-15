@@ -1,7 +1,18 @@
 "use client";
 
-import { Bell, Menu } from "lucide-react";
+import { Bell, User, Settings, HelpCircle, Shield, BookOpen } from "lucide-react";
 import { useSession } from "@/lib/session";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ErpHeaderProps {
   breadcrumbs: { label: string; href?: string }[];
@@ -19,14 +30,6 @@ export function ErpHeader({
     <header className="sticky top-0 z-30 bg-white border-b border-neutral-200">
       <div className="flex items-center justify-between h-14 px-4 lg:px-6">
         <div className="flex items-center gap-3">
-          <button
-            onClick={onMenuToggle}
-            className="lg:hidden p-1.5 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors"
-            aria-label="Toggle sidebar"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-
           <nav className="hidden sm:flex items-center gap-1.5 text-sm font-sans text-neutral-500">
             {breadcrumbs.map((item, i) => (
               <span key={i} className="flex items-center gap-1.5">
@@ -61,18 +64,59 @@ export function ErpHeader({
             )}
           </button>
 
-          <div className="flex items-center gap-2 pl-3 border-l border-neutral-200">
-            <div className="w-8 h-8 rounded-lg bg-c-blue flex items-center justify-center">
-              <span className="font-quick font-bold text-white text-xs">
-                {session.storeInitials}
-              </span>
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-xs font-quick font-semibold text-neutral-700">
-                {session.vendorName}
-              </p>
-              <p className="text-xs font-sans text-neutral-500 capitalize">{session.role}</p>
-            </div>
+          <div className="pl-3 border-l border-neutral-200">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 rounded-lg hover:bg-neutral-100 transition-colors py-1 px-1.5 -my-1 -mx-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-c-blue">
+                  <div className="w-8 h-8 rounded-lg bg-c-blue flex items-center justify-center">
+                    <span className="font-quick font-bold text-white text-xs">
+                      {session.storeInitials}
+                    </span>
+                  </div>
+                  <div className="hidden sm:block text-left">
+                    <p className="text-xs font-quick font-semibold text-neutral-700">
+                      {session.vendorName}
+                    </p>
+                    <p className="text-xs font-sans text-neutral-500 capitalize">{session.role}</p>
+                  </div>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Setting
+                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    Pelajari Lebih Lanjut
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="w-52">
+                    <DropdownMenuItem>
+                      <Shield className="mr-2 h-4 w-4" />
+                      Kebijakan Privasi
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      Pusat Bantuan Vendor
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => session.logout()}
+                  className="text-c-red focus:text-c-red focus:bg-red-50"
+                >
+                  Keluar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

@@ -12,6 +12,7 @@ export interface SessionUser {
 }
 
 interface SessionContextType extends SessionUser {
+  loaded: boolean;
   logout: () => void;
   login: (role?: "admin" | "vendor" | "customer") => void;
 }
@@ -50,12 +51,14 @@ const DEFAULT_SESSION: SessionUser = {
 
 const SessionContext = createContext<SessionContextType>({
   ...DEFAULT_SESSION,
+  loaded: false,
   logout: () => {},
   login: (_role?: "admin" | "vendor" | "customer") => {},
 });
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<SessionUser>(DEFAULT_SESSION);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("is_authenticated");
@@ -69,6 +72,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         vendorId: storedRole === "vendor" ? (storedVendorId ?? template.vendorId) : template.vendorId,
       });
     }
+    setLoaded(true);
   }, []);
 
   const logout = () => {
@@ -99,7 +103,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <SessionContext.Provider value={{ ...session, logout, login }}>
+    <SessionContext.Provider value={{ ...session, loaded, logout, login }}>
       {children}
     </SessionContext.Provider>
   );
