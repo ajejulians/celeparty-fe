@@ -8,7 +8,6 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { useSession } from "@/lib/session";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { EscrowBreakdown } from "@/components/payment/EscrowBreakdown";
-import { TicketScan } from "@/components/ticket/TicketScan";
 import {
   ClipboardList,
   Clock,
@@ -204,72 +203,64 @@ export default function VendorOrdersPage() {
           </TabsContent>
 
           <TabsContent value="tickets">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
-                <div className="bg-white rounded-lg border border-neutral-200">
-                  <div className="flex flex-col sm:flex-row gap-3 p-4 items-start sm:items-center justify-between border-b border-neutral-100">
-                    <div className="flex gap-2">
-                      <div className="relative">
-                        <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
-                        <input
-                          placeholder="Cari barcode / pembeli..."
-                          className="pl-9 pr-3 py-2 text-sm border border-neutral-200 rounded-lg w-56 font-sans focus:outline-none focus:border-c-blue"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button className="flex items-center gap-1.5 text-sm font-sans font-medium text-neutral-600 hover:text-neutral-900 border rounded-lg px-3 py-2 hover:brightness-95 active:scale-[0.98] transition-all">
-                        <Download className="w-4 h-4" /> Export CSV (BOM)
-                      </button>
-                    </div>
-                  </div>
-                  <div className="overflow-x-auto min-w-[640px]">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="bg-neutral-50 border-b border-neutral-200">
-                          {["Barcode", "Penerima", "Event", "Tgl Event", "Aksi"].map((h) => (
-                            <th
-                              key={h}
-                              className="text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3 text-left"
-                            >
-                              {h}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {ticketOrders.map((o, i) => (
-                          <tr
-                            key={o.id}
-                            className={`border-b border-neutral-100 last:border-0 hover:bg-neutral-50 transition-colors ${
-                              i % 2 === 0 ? "bg-white" : "bg-neutral-50/50"
-                            }`}
-                          >
-                            <td className="px-4 py-3 font-mono text-xs text-neutral-600">
-                              {o.barcode}
-                            </td>
-                            <td className="px-4 py-3 font-sans text-sm text-neutral-900">
-                              {o.customer}
-                            </td>
-                            <td className="px-4 py-3 font-sans text-sm text-neutral-700 max-w-[150px] truncate">
-                              {o.product}
-                            </td>
-                            <td className="px-4 py-3 font-sans text-xs text-neutral-500">
-                              {formatDate(o.eventDate)}
-                            </td>
-                            <td className="px-4 py-3">
-                              <Button variant="outline" size="sm" className="font-quick text-xs h-8">Detail</Button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+            <div className="bg-white rounded-lg border border-neutral-200">
+              <div className="flex flex-col sm:flex-row gap-3 p-4 items-start sm:items-center justify-between border-b border-neutral-100">
+                <div className="flex gap-2">
+                  <div className="relative">
+                    <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
+                    <input
+                      placeholder="Cari barcode / pembeli..."
+                      className="pl-9 pr-3 py-2 text-sm border border-neutral-200 rounded-lg w-56 font-sans focus:outline-none focus:border-c-blue"
+                    />
                   </div>
                 </div>
+                <div className="flex gap-2">
+                  <button className="flex items-center gap-1.5 text-sm font-sans font-medium text-neutral-600 hover:text-neutral-900 border rounded-lg px-3 py-2 hover:brightness-95 active:scale-[0.98] transition-all">
+                    <Download className="w-4 h-4" /> Export CSV (BOM)
+                  </button>
+                </div>
               </div>
-              
-              <div className="lg:col-span-1">
-                <TicketScan />
+              <div className="overflow-x-auto min-w-[640px]">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-neutral-50 border-b border-neutral-200">
+                      {["Barcode", "Penerima", "Event", "Tgl Event", "Aksi"].map((h) => (
+                        <th
+                          key={h}
+                          className="text-xs font-sans font-semibold text-neutral-500 uppercase tracking-wide px-4 py-3 text-left"
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ticketOrders.map((o, i) => (
+                      <tr
+                        key={o.id}
+                        className={`border-b border-neutral-100 last:border-0 hover:bg-neutral-50 transition-colors ${
+                          i % 2 === 0 ? "bg-white" : "bg-neutral-50/50"
+                        }`}
+                      >
+                        <td className="px-4 py-3 font-mono text-xs text-neutral-600">
+                          {o.barcode}
+                        </td>
+                        <td className="px-4 py-3 font-sans text-sm text-neutral-900">
+                          {o.customer}
+                        </td>
+                        <td className="px-4 py-3 font-sans text-sm text-neutral-700 max-w-[150px] truncate">
+                          {o.product}
+                        </td>
+                        <td className="px-4 py-3 font-sans text-xs text-neutral-500">
+                          {formatDate(o.eventDate)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <Button variant="outline" size="sm" className="font-quick text-xs h-8">Detail</Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </TabsContent>

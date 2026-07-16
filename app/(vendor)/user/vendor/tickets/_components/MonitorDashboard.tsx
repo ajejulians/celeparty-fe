@@ -16,10 +16,11 @@ import { getEventStats, getTicketsByEvent, CATEGORY_BADGE_COLORS, EVENT_STATUS_M
 import { formatCurrency } from "@/lib/utils";
 import {
   ArrowLeft, Download, QrCode, CheckCircle, Ticket, Camera, AlertTriangle,
-  Search, Calendar, MapPin, ExternalLink, TrendingUp, Image,
+  Search, Calendar, MapPin, ExternalLink, TrendingUp, Image, Keyboard, Scan,
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import Link from "next/link";
+import { TicketScan } from "@/components/ticket/TicketScan";
 
 type TabFilter = "all" | "pending" | "checked_in";
 
@@ -262,32 +263,13 @@ export function MonitorDashboard({ event, backHref = "/user/vendor/tickets", bac
       </div>
 
       <Dialog open={showScanModal} onOpenChange={(open) => { if (!open) handleCloseScanner(); }}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2"><Camera className="w-5 h-5 text-c-blue" /> Scan Barcode</DialogTitle>
             <DialogDescription>{event.name} — Scanner sedang aktif dan mengunci sesi.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="bg-neutral-100 rounded-xl h-40 flex items-center justify-center border-2 border-dashed border-neutral-300">
-              <div className="text-center space-y-2"><QrCode className="w-14 h-14 text-neutral-400 mx-auto" /><p className="font-sans text-xs text-neutral-500">Arahkan kamera ke barcode tiket</p><p className="font-sans text-[10px] text-c-blue font-semibold">Session scanner aktif — mengunci sesi</p></div>
-            </div>
-            <div className="space-y-2">
-              <Label className="font-sans text-xs text-neutral-500">Atau masukkan kode barcode manual:</Label>
-              <Input value={scanInput} onChange={(e) => { setScanInput(e.target.value); setScanResult(null); }} onKeyDown={(e) => { if (e.key === "Enter") handleScanSubmit(); }} placeholder="CP-JJ26-0001A" className="font-mono text-sm h-11" autoFocus />
-            </div>
-            {scanResult === "valid" && scannedTicket && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" />
-                <div><p className="font-quick font-bold text-emerald-800 text-sm">Check-in Berhasil!</p><p className="font-sans text-xs text-emerald-700">{scannedTicket.buyerName} &middot; {scannedTicket.category} &middot; {formatCurrency(scannedTicket.price)}</p><p className="font-mono text-[10px] text-emerald-500 mt-0.5">{scannedTicket.barcode}</p></div>
-              </div>
-            )}
-            {scanResult === "invalid" && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-c-red mt-0.5 shrink-0" />
-                <div><p className="font-quick font-bold text-c-red text-sm">{scannedTicket ? "Tiket sudah digunakan" : "Barcode tidak ditemukan"}</p><p className="font-sans text-xs text-red-700">{scannedTicket ? `${scannedTicket.buyerName} sudah check-in sebelumnya.` : "Periksa kembali kode barcode — pastikan milik event ini."}</p></div>
-              </div>
-            )}
-            <Button onClick={handleScanSubmit} disabled={!scanInput.trim()} className="w-full font-quick font-semibold h-12 text-base gap-2 bg-c-blue"><CheckCircle className="w-5 h-5" /> Check-in Tiket</Button>
+          <div className="py-2">
+            <TicketScan />
           </div>
           <DialogFooter className="flex flex-col gap-2">
             <p className="font-sans text-xs text-neutral-400 text-center">Menutup scanner akan melepas kunci session.</p>

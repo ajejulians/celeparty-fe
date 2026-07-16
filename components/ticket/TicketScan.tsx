@@ -1,24 +1,24 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QrCode, Keyboard, Scan, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-
-type ScanResult = {
-  status: "idle" | "valid" | "used" | "invalid";
-  barcode?: string;
-  timestamp?: string;
-  message?: string;
-};
+import { useScannerStore } from "@/lib/scanner-store";
 
 export function TicketScan() {
-  const [activeTab, setActiveTab] = useState<"camera" | "usb" | "manual">("camera");
-  const [result, setResult] = useState<ScanResult>({ status: "idle" });
-  const [manualInput, setManualInput] = useState("");
+  const {
+    activeTab,
+    setActiveTab,
+    barcodeInput,
+    setBarcodeInput,
+    scanResult,
+    setScanResult,
+  } = useScannerStore();
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const usbInputRef = useRef<HTMLInputElement>(null);
   const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
@@ -27,21 +27,21 @@ export function TicketScan() {
     // Simulate backend verification
     const len = barcode.length;
     if (len < 5) {
-      setResult({ status: "invalid", message: "Barcode tidak valid atau tidak ditemukan." });
+      setScanResult({ status: "invalid", message: "Barcode tidak valid atau tidak ditemukan." });
     } else if (len % 2 === 0) {
-      setResult({
+      setScanResult({
         status: "used",
         barcode,
         timestamp: new Date().toISOString(),
         message: "Tiket sudah digunakan sebelumnya.",
       });
     } else {
-      setResult({ status: "valid", barcode, message: "Tiket valid. Akses diizinkan." });
+      setScanResult({ status: "valid", barcode, message: "Tiket valid. Akses diizinkan." });
     }
     
     // Auto reset result after 3 seconds for quick scanning in USB/Camera mode
     if (activeTab !== "manual") {
-      setTimeout(() => setResult({ status: "idle" }), 3000);
+      setTimeout(() => setScanResult({ status: "idle" }), 3000);
     }
   };
 
@@ -86,16 +86,16 @@ export function TicketScan() {
 
   const handleUsbSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (manualInput.trim()) {
-      processBarcode(manualInput);
-      setManualInput(""); // Clear for next scan
+    if (barcodeInput.trim()) {
+      processBarcode(barcodeInput);
+      setBarcodeInput(""); // Clear for next scan
     }
   };
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (manualInput.trim()) {
-      processBarcode(manualInput);
+    if (barcodeInput.trim()) {
+      processBarcode(barcodeInput);
     }
   };
 
@@ -164,8 +164,8 @@ export function TicketScan() {
               <form onSubmit={handleUsbSubmit} className="opacity-0 w-0 h-0 overflow-hidden">
                 <input
                   ref={usbInputRef}
-                  value={manualInput}
-                  onChange={(e) => setManualInput(e.target.value)}
+                  value={barcodeInput}
+                  onChange={(e) => setBarcodeInput(e.target.value)}
                   autoFocus
                 />
               </form>
@@ -179,8 +179,8 @@ export function TicketScan() {
                   Masukkan Kode Barcode (17 digit)
                 </label>
                 <Input
-                  value={manualInput}
-                  onChange={(e) => setManualInput(e.target.value)}
+                  value={barcodeInput}
+                  onChange={(e) => setBarcodeInput(e.target.value)}
                   placeholder="Contoh: 12345678901234567"
                   className="font-mono text-base h-12"
                 />
@@ -194,48 +194,48 @@ export function TicketScan() {
       </Card>
 
       {/* Result Cards */}
-      {result.status === "valid" && (
+      {scanResult.status === "valid" && (
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-4 items-start animate-fade-in motion-reduce:animate-none">
           <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
             <CheckCircle2 className="w-6 h-6 text-emerald-600" />
           </div>
           <div>
             <h4 className="font-quick font-bold text-emerald-800 text-lg">Akses Diizinkan</h4>
-            <p className="font-sans text-emerald-700 text-sm mt-1">{result.message}</p>
-            {result.barcode && (
+            <p className="font-sans text-emerald-700 text-sm mt-1">{scanResult.message}</p>
+            {scanResult.barcode && (
               <p className="font-mono text-xs text-emerald-600 mt-2 opacity-80">
-                Barcode: {result.barcode}
+                Barcode: {scanResult.barcode}
               </p>
             )}
           </div>
         </div>
       )}
 
-      {result.status === "used" && (
+      {scanResult.status === "used" && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-4 items-start animate-fade-in motion-reduce:animate-none">
           <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
             <AlertTriangle className="w-6 h-6 text-amber-600" />
           </div>
           <div>
             <h4 className="font-quick font-bold text-amber-800 text-lg">Tiket Sudah Digunakan</h4>
-            <p className="font-sans text-amber-700 text-sm mt-1">{result.message}</p>
-            {result.timestamp && (
+            <p className="font-sans text-amber-700 text-sm mt-1">{scanResult.message}</p>
+            {scanResult.timestamp && (
               <p className="font-sans text-xs text-amber-600 mt-2">
-                Waktu Scan Pertama: {formatDate(result.timestamp)}
+                Waktu Scan Pertama: {formatDate(scanResult.timestamp)}
               </p>
             )}
           </div>
         </div>
       )}
 
-      {result.status === "invalid" && (
+      {scanResult.status === "invalid" && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-4 items-start animate-fade-in motion-reduce:animate-none">
           <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
             <XCircle className="w-6 h-6 text-c-red" />
           </div>
           <div>
             <h4 className="font-quick font-bold text-red-800 text-lg">Akses Ditolak</h4>
-            <p className="font-sans text-red-700 text-sm mt-1">{result.message}</p>
+            <p className="font-sans text-red-700 text-sm mt-1">{scanResult.message}</p>
           </div>
         </div>
       )}
