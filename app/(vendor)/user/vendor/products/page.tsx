@@ -414,7 +414,7 @@ function VendorProductsPage() {
   return (
     <>
       <ErpHeader breadcrumbs={[{ label: "Dashboard", href: "/user/vendor/dashboard" }, { label: "Produk & Jasa" }]} />
-      <div className="px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[1400px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
           <div>
             <h1 className="font-quick font-bold text-2xl text-neutral-900">Produk &amp; Jasa</h1>
@@ -719,7 +719,7 @@ function VendorProductsPage() {
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[60]">
                 <SelectItem value="active">Aktif</SelectItem>
                 <SelectItem value="sold_out">Habis</SelectItem>
                 <SelectItem value="escrow_badge">Escrow</SelectItem>

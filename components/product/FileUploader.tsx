@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import imageCompression from "browser-image-compression";
-import { UploadCloud, X, AlertTriangle } from "lucide-react";
+import { UploadCloud, X, AlertTriangle, Camera } from "lucide-react";
 
 interface FileUploaderProps {
   onFileChange: (file: File | null) => void;
@@ -117,26 +117,58 @@ export function FileUploader({ onFileChange, currentImage }: FileUploaderProps) 
 
   return (
     <div className="w-full">
+      <input
+        ref={inputRef}
+        type="file"
+        className="hidden"
+        accept={ACCEPTED_TYPES.join(",")}
+        onChange={handleFileChange}
+        disabled={isCompressing}
+      />
+
       {preview ? (
-        <div className="relative rounded-lg overflow-hidden border border-neutral-200 group aspect-video w-full">
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`relative rounded-lg overflow-hidden border aspect-video w-full shadow-sm bg-neutral-100 transition-colors ${
+            isDragOver ? "border-c-blue ring-2 ring-c-blue/15" : "border-neutral-200"
+          }`}
+        >
           <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <button
-              type="button"
-              onClick={clearFile}
-              className="bg-c-red text-white p-2 rounded-full hover:bg-c-red/90 transition-colors"
-              aria-label="Hapus gambar"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+          
+          {/* Subtle outline for image depth */}
+          <div className="absolute inset-0 ring-1 ring-black/10 rounded-lg pointer-events-none" />
+
+          {/* Interactive Change Photo trigger */}
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="absolute inset-0 w-full h-full bg-black/50 opacity-0 hover:opacity-100 focus:opacity-100 focus:outline-none transition-opacity flex flex-col items-center justify-center gap-2 text-white cursor-pointer group focus:ring-2 focus:ring-c-blue/80"
+          >
+            <Camera className="w-6 h-6 transition-transform group-hover:scale-110 group-focus:scale-110 duration-200" />
+            <span className="font-sans text-xs font-semibold">Ubah Foto</span>
+          </button>
+
+          {/* Delete Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              clearFile();
+            }}
+            className="absolute top-2 right-2 z-10 bg-white/90 hover:bg-white text-neutral-700 hover:text-c-red p-1.5 rounded-full shadow-md transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-c-red focus:ring-offset-1"
+            aria-label="Hapus gambar"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       ) : (
         <label
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`flex flex-col items-center justify-center w-full aspect-video border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+          className={`flex flex-col items-center justify-center w-full aspect-video border-2 border-dashed rounded-lg cursor-pointer transition-colors focus-within:border-c-blue focus-within:ring-2 focus-within:ring-c-blue/15 ${
             isDragOver
               ? "border-c-blue bg-c-blue-50"
               : "border-neutral-300 bg-neutral-50 hover:bg-neutral-100"
@@ -155,14 +187,6 @@ export function FileUploader({ onFileChange, currentImage }: FileUploaderProps) 
               </>
             )}
           </div>
-          <input
-            ref={inputRef}
-            type="file"
-            className="hidden"
-            accept={ACCEPTED_TYPES.join(",")}
-            onChange={handleFileChange}
-            disabled={isCompressing}
-          />
         </label>
       )}
 
