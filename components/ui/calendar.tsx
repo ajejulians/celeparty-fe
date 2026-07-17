@@ -78,9 +78,9 @@ function Calendar({
 			classNames={{
 				months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
 				month: "space-y-4 relative",
-				month_caption: "flex justify-center pt-1 items-center h-7",
+				month_caption: "flex justify-center pt-1 pl-1 items-center h-7",
 				caption_label: "hidden",
-				nav: "absolute top-1 left-0 right-0 flex items-center justify-between pointer-events-none z-10",
+				nav: "absolute top-1 left-2 right-0 flex items-center justify-between pointer-events-none z-10",
 				button_previous: cn(navButtonShared, "pointer-events-auto"),
 				button_next: cn(navButtonShared, "pointer-events-auto"),
 				month_grid: "w-full border-collapse space-y-1",
