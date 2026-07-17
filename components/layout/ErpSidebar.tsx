@@ -1,7 +1,11 @@
+"use client";
+
 import { ChevronDown, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { NavItem } from "../../lib/navigation";
 import { getActiveChildPaths } from "../../lib/navigation";
+import { useSession } from "../../lib/session";
 import { cn } from "../../lib/utils";
 
 interface ErpSidebarProps {
@@ -121,6 +125,14 @@ export function ErpSidebar({
 	navItems,
 	activePath,
 }: ErpSidebarProps) {
+	const session = useSession();
+	const router = useRouter();
+
+	const handleLogout = () => {
+		session.logout();
+		router.push("/");
+	};
+
 	return (
 		<aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 bg-white border-r border-neutral-200 h-screen sticky top-0">
 			<div className="p-5 border-b border-neutral-100">
@@ -163,13 +175,13 @@ export function ErpSidebar({
 			</nav>
 
 			<div className="px-3 py-4 border-t border-neutral-100">
-				<a
-					href="/auth/login"
-					className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-quick font-semibold text-neutral-500 hover:bg-neutral-100 hover:text-c-red transition-colors"
+				<button
+					onClick={handleLogout}
+					className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-quick font-semibold text-neutral-500 hover:bg-neutral-100 hover:text-c-red transition-colors"
 				>
 					<LogOut className="w-5 h-5" />
 					<span>Keluar</span>
-				</a>
+				</button>
 			</div>
 		</aside>
 	);

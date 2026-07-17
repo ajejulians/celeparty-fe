@@ -117,13 +117,6 @@ export function ErpHeader({
 										</DropdownMenuItem>
 									</DropdownMenuSubContent>
 								</DropdownMenuSub>
-								<DropdownMenuSeparator />
-								<DropdownMenuItem
-									onClick={() => session.logout()}
-									className="text-c-red focus:text-c-red focus:bg-red-50"
-								>
-									Keluar
-								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</div>
