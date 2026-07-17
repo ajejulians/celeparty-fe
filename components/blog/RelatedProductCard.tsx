@@ -1,10 +1,10 @@
-import { Product } from "../../lib/data";
+import type { Product } from "../../lib/data";
 import { TicketCard } from "../product/TicketCard";
 
 interface RelatedProductCardProps {
-  product: Product;
+	product: Product;
 }
 
 export function RelatedProductCard({ product }: RelatedProductCardProps) {
-  return <TicketCard product={product} variant="compact" />;
+	return <TicketCard product={product} variant="compact" />;
 }
