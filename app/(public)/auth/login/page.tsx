@@ -2,57 +2,23 @@
 
 import { Eye, EyeOff, Lock } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { FormField } from "../../../../components/auth/FormField";
 import { useSession } from "../../../../lib/session";
 
-type Role = "customer" | "vendor" | "admin";
-
-interface CredentialResult {
-	success: boolean;
-	role: Role | null;
-	name: string;
-	message?: string;
-}
-
-const MOCK_CREDENTIALS: Record<string, CredentialResult> = {
-	"customer@celeparty.com": {
-		success: true,
-		role: "customer",
-		name: "Budi Santoso",
-	},
-	"vendor@celeparty.com": {
-		success: true,
-		role: "vendor",
-		name: "Jakarta Audio Pro",
-	},
-	"admin@celeparty.com": {
-		success: true,
-		role: "admin",
-		name: "Admin Celeparty",
-	},
-};
-
-const ROLE_REDIRECTS: Record<Role, string> = {
-	customer: "/products",
-	vendor: "/user/vendor/dashboard",
-	admin: "/user/admin/dashboard",
-};
-
-const ROLE_LABELS: Record<Role, string> = {
-	customer: "Customer",
-	vendor: "Vendor",
-	admin: "Admin",
-};
-
 export default function LoginPage() {
 	const session = useSession();
+	const searchParams = useSearchParams();
+	const redirectTo = searchParams.get("redirect");
+
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
-	const [rememberMe, setRememberMe] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const [authResult, setAuthResult] = useState<CredentialResult | null>(null);
+	const [errorMsg, setErrorMsg] = useState("");
+	const [successMsg, setSuccessMsg] = useState("");
 	const [errors, setErrors] = useState<{ email?: string; password?: string }>(
 		{},
 	);
@@ -69,29 +35,26 @@ export default function LoginPage() {
 		return Object.keys(newErrors).length === 0;
 	}
 
-	function handleLogin() {
+	async function handleLogin() {
 		if (!validate()) return;
 		setIsLoading(true);
-		setAuthResult(null);
+		setErrorMsg("");
+		setSuccessMsg("");
 
-		setTimeout(() => {
-			const found = MOCK_CREDENTIALS[email.toLowerCase().trim()];
-			if (found && password === "rahasia123") {
-				setAuthResult(found);
-				session.login(found.role!);
-				setTimeout(() => {
-					window.location.href = ROLE_REDIRECTS[found.role!];
-				}, 1500);
-			} else {
-				setAuthResult({
-					success: false,
-					role: null,
-					name: "",
-					message: "Email atau kata sandi salah. Silakan coba lagi.",
-				});
-			}
+		try {
+			const result = await session.login(email, password);
+			setSuccessMsg("Login berhasil!");
+			toast.success("Login berhasil");
+			setTimeout(() => {
+				window.location.href = redirectTo || result.redirect;
+			}, 800);
+		} catch (err: unknown) {
+			const message =
+				err instanceof Error ? err.message : "Email atau kata sandi salah";
+			setErrorMsg(message);
+		} finally {
 			setIsLoading(false);
-		}, 1500);
+		}
 	}
 
 	return (
@@ -129,7 +92,7 @@ export default function LoginPage() {
 							value={email}
 							onChange={(v) => {
 								setEmail(v);
-								setAuthResult(null);
+								setErrorMsg("");
 								if (errors.email)
 									setErrors((e) => ({ ...e, email: undefined }));
 							}}
@@ -145,7 +108,7 @@ export default function LoginPage() {
 								value={password}
 								onChange={(v) => {
 									setPassword(v);
-									setAuthResult(null);
+									setErrorMsg("");
 									if (errors.password)
 										setErrors((e) => ({ ...e, password: undefined }));
 								}}
@@ -158,21 +121,12 @@ export default function LoginPage() {
 							<label className="flex items-center gap-2 cursor-pointer select-none">
 								<input
 									type="checkbox"
-									checked={rememberMe}
-									onChange={(e) => setRememberMe(e.target.checked)}
 									className="w-4 h-4 rounded border-neutral-300 text-c-blue focus:ring-c-blue"
 								/>
 								<span className="text-xs font-sans text-neutral-600">
 									Ingat Saya
 								</span>
 							</label>
-
-							<Link
-								href="/auth/forgot-password"
-								className="text-xs font-sans font-medium text-c-blue hover:underline"
-							>
-								Lupa Kata Sandi?
-							</Link>
 
 							<button
 								type="button"
@@ -190,35 +144,26 @@ export default function LoginPage() {
 							</button>
 						</div>
 
-						{authResult && !authResult.success && (
+						{errorMsg && (
 							<div className="bg-c-red-50 border border-c-red/20 rounded-lg p-3 flex items-start gap-2 motion-safe:animate-fade-in motion-reduce:animate-none">
 								<span className="text-c-red text-sm mt-0.5 shrink-0">
 									&#x26A0;
 								</span>
-								<p className="text-xs font-sans text-c-red">
-									{authResult.message}
-								</p>
+								<p className="text-xs font-sans text-c-red">{errorMsg}</p>
 							</div>
 						)}
 
-						{authResult?.success && (
+						{successMsg && (
 							<div className="bg-status-success/10 border border-status-success/30 rounded-lg p-3 flex items-start gap-2 motion-safe:animate-fade-in motion-reduce:animate-none">
 								<span className="text-status-success text-sm mt-0.5 shrink-0">
 									&#x2713;
 								</span>
 								<div>
 									<p className="text-xs font-sans font-medium text-status-success">
-										Login berhasil!
-									</p>
-									<p className="text-xs font-sans text-neutral-600 mt-0.5">
-										Masuk sebagai{" "}
-										<span className="font-semibold">{authResult.name}</span> (
-										{ROLE_LABELS[authResult.role!]})
+										{successMsg}
 									</p>
 									<p className="text-xs font-sans text-neutral-500 mt-0.5">
-										Mengalihkan ke halaman{" "}
-										{authResult.role === "customer" ? "Katalog" : "Dashboard"}
-										...
+										Mengalihkan ke halaman...
 									</p>
 								</div>
 							</div>
@@ -249,26 +194,6 @@ export default function LoginPage() {
 							>
 								Daftar Sekarang
 							</Link>
-						</p>
-					</div>
-				</div>
-
-				<div className="mt-6 bg-c-blue-50 rounded-xl border border-c-blue-100 p-4">
-					<p className="text-xs font-sans font-semibold text-c-blue mb-2 flex items-center gap-1.5">
-						<Lock className="w-3.5 h-3.5" /> Data Demo untuk Uji Coba
-					</p>
-					<div className="space-y-1.5 text-xs font-sans text-neutral-600">
-						<p>
-							<span className="font-semibold">Customer:</span>{" "}
-							customer@celeparty.com / rahasia123
-						</p>
-						<p>
-							<span className="font-semibold">Vendor:</span>{" "}
-							vendor@celeparty.com / rahasia123
-						</p>
-						<p>
-							<span className="font-semibold">Admin:</span> admin@celeparty.com
-							/ rahasia123
 						</p>
 					</div>
 				</div>

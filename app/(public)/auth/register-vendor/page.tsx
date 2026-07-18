@@ -4,27 +4,48 @@ import { ChevronLeft, Store } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useSession } from "@/lib/session";
 
 export default function RegisterVendorPage() {
 	const router = useRouter();
+	const session = useSession();
 	const [formData, setFormData] = useState({
 		storeName: "",
 		description: "",
 		phone: "",
 		address: "",
+		email: "",
+		password: "",
 	});
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
+	const [error, setError] = useState("");
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
+		setError("");
 
-		// Simulasi API call
-		setTimeout(() => {
-			setLoading(false);
+		try {
+			await session.register({
+				username: formData.email.split("@")[0],
+				email: formData.email,
+				password: formData.password,
+				role: "vendor",
+				phone: formData.phone,
+			});
+
+			toast.success("Pendaftaran vendor berhasil! Silakan login.");
 			setSuccess(true);
-		}, 1500);
+		} catch (err: unknown) {
+			const message =
+				err instanceof Error ? err.message : "Pendaftaran gagal";
+			setError(message);
+			toast.error(message);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	if (success) {
@@ -42,10 +63,10 @@ export default function RegisterVendorPage() {
 						akan meninjau pengajuan Anda dalam 1-2 hari kerja.
 					</p>
 					<button
-						onClick={() => router.push("/")}
+						onClick={() => router.push("/auth/login")}
 						className="w-full bg-c-blue text-white font-quick font-bold py-3.5 rounded-xl hover:bg-c-blue/90 transition-colors"
 					>
-						Kembali ke Beranda
+						Lanjutkan ke Login
 					</button>
 				</div>
 			</div>
@@ -78,6 +99,12 @@ export default function RegisterVendorPage() {
 					</div>
 
 					<form onSubmit={handleSubmit} className="p-8 space-y-6">
+						{error && (
+							<div className="bg-c-red-50 border border-c-red/20 rounded-lg p-3">
+								<p className="text-xs font-sans text-c-red">{error}</p>
+							</div>
+						)}
+
 						<div>
 							<label
 								htmlFor="storeName"
@@ -94,6 +121,47 @@ export default function RegisterVendorPage() {
 								value={formData.storeName}
 								onChange={(e) =>
 									setFormData({ ...formData, storeName: e.target.value })
+								}
+							/>
+						</div>
+
+						<div>
+							<label
+								htmlFor="email"
+								className="block text-sm font-semibold text-neutral-900 mb-2"
+							>
+								Email
+							</label>
+							<input
+								type="email"
+								id="email"
+								required
+								placeholder="email@contoh.com"
+								className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-c-blue focus:ring-1 focus:ring-c-blue font-sans text-sm transition-all"
+								value={formData.email}
+								onChange={(e) =>
+									setFormData({ ...formData, email: e.target.value })
+								}
+							/>
+						</div>
+
+						<div>
+							<label
+								htmlFor="password"
+								className="block text-sm font-semibold text-neutral-900 mb-2"
+							>
+								Kata Sandi
+							</label>
+							<input
+								type="password"
+								id="password"
+								required
+								minLength={8}
+								placeholder="Minimal 8 karakter"
+								className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-c-blue focus:ring-1 focus:ring-c-blue font-sans text-sm transition-all"
+								value={formData.password}
+								onChange={(e) =>
+									setFormData({ ...formData, password: e.target.value })
 								}
 							/>
 						</div>

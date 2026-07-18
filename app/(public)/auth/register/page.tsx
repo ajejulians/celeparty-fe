@@ -3,14 +3,17 @@
 import { Eye, EyeOff, Smartphone, Store, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 import { FormField } from "../../../../components/auth/FormField";
 import { OtpInput } from "../../../../components/auth/OtpInput";
 import { PasswordStrength } from "../../../../components/auth/PasswordStrength";
+import { useSession } from "../../../../lib/session";
 
 type RegisterStep = "form" | "otp" | "success";
 type Role = "customer" | "vendor";
 
 export default function RegisterPage() {
+	const session = useSession();
 	const [step, setStep] = useState<RegisterStep>("form");
 	const [role, setRole] = useState<Role>("customer");
 	const [fullName, setFullName] = useState("");
@@ -25,6 +28,7 @@ export default function RegisterPage() {
 	const [otpValue, setOtpValue] = useState("");
 	const [otpError, setOtpError] = useState("");
 	const [errors, setErrors] = useState<Record<string, string>>({});
+	const [apiError, setApiError] = useState("");
 
 	function validateForm(): boolean {
 		const newErrors: Record<string, string> = {};
@@ -73,30 +77,43 @@ export default function RegisterPage() {
 
 	function handleSendOtp() {
 		if (!validateForm()) return;
-		setIsLoading(true);
-		setTimeout(() => {
-			setIsLoading(false);
-			setStep("otp");
-		}, 1200);
+		setStep("otp");
 	}
 
-	function handleVerifyOtp() {
+	async function handleVerifyOtp() {
 		if (otpValue.length < 4) {
 			setOtpError("Kode OTP harus 4 digit");
 			return;
 		}
+
+		if (otpValue !== "1234") {
+			setOtpError("Kode OTP tidak valid. Gunakan 1234 untuk demo.");
+			return;
+		}
+
 		setIsLoading(true);
 		setOtpError("");
+		setApiError("");
 
-		setTimeout(() => {
-			if (otpValue === "1234") {
-				setIsLoading(false);
-				setStep("success");
-			} else {
-				setIsLoading(false);
-				setOtpError("Kode OTP tidak valid. Gunakan 1234 untuk demo.");
-			}
-		}, 1500);
+		try {
+			await session.register({
+				username: email.split("@")[0],
+				email,
+				password,
+				role: role === "vendor" ? "vendor" : "customer",
+				phone,
+			});
+
+			toast.success("Pendaftaran berhasil! Silakan login.");
+			setStep("success");
+		} catch (err: unknown) {
+			const message =
+				err instanceof Error ? err.message : "Pendaftaran gagal";
+			setApiError(message);
+			setOtpError(message);
+		} finally {
+			setIsLoading(false);
+		}
 	}
 
 	return (
@@ -312,17 +329,9 @@ export default function RegisterPage() {
 
 							<button
 								type="submit"
-								disabled={isLoading}
-								className="w-full inline-flex items-center justify-center gap-2 bg-c-green text-neutral-900 font-quick font-semibold text-sm px-6 py-3 rounded-lg min-h-[44px] transition-all duration-200 hover:brightness-95 hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+								className="w-full inline-flex items-center justify-center gap-2 bg-c-green text-neutral-900 font-quick font-semibold text-sm px-6 py-3 rounded-lg min-h-[44px] transition-all duration-200 hover:brightness-95 hover:shadow-md active:scale-[0.98]"
 							>
-								{isLoading ? (
-									<>
-										<span className="w-4 h-4 border-2 border-neutral-900/30 border-t-neutral-900 rounded-full animate-spin" />
-										Mengirim Kode OTP...
-									</>
-								) : (
-									"Daftar Sekarang"
-								)}
+								Daftar Sekarang
 							</button>
 						</form>
 
@@ -373,7 +382,7 @@ export default function RegisterPage() {
 							{isLoading ? (
 								<>
 									<span className="w-4 h-4 border-2 border-neutral-900/30 border-t-neutral-900 rounded-full animate-spin" />
-									Memverifikasi...
+									Mendaftarkan Akun...
 								</>
 							) : (
 								"Verifikasi"
@@ -386,21 +395,8 @@ export default function RegisterPage() {
 								onClick={() => setStep("form")}
 								className="text-xs font-sans font-medium text-c-blue hover:underline"
 							>
-								&larr; Ubah nomor telepon
+								&larr; Ubah data pendaftaran
 							</button>
-							<p className="text-xs font-sans text-neutral-500">
-								Belum menerima kode?{" "}
-								<button
-									type="button"
-									onClick={() => {
-										setIsLoading(true);
-										setTimeout(() => setIsLoading(false), 800);
-									}}
-									className="font-medium text-c-blue hover:underline"
-								>
-									Kirim ulang
-								</button>
-							</p>
 						</div>
 					</div>
 				)}

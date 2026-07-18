@@ -4,15 +4,18 @@ const ADMIN_PATHS = ["/user/admin"];
 const VENDOR_PATHS = ["/user/vendor"];
 const PROTECTED_PATHS = [...ADMIN_PATHS, ...VENDOR_PATHS];
 
-interface SessionHeaders {
-  "x-user-role": "admin" | "vendor" | "customer";
-  "x-vendor-id": string;
-  "x-is-authenticated": "true" | "false";
-}
-
 function getRole(allowedRoles: string[], raw?: string): "admin" | "vendor" | "customer" {
   if (raw && allowedRoles.includes(raw)) return raw as "admin" | "vendor" | "customer";
   return "customer";
+}
+
+function isJwtExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
 }
 
 export function middleware(request: NextRequest) {
@@ -26,8 +29,11 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
+  const jwtToken = request.cookies.get("jwt_token")?.value;
   const isAuthenticatedCookie = request.cookies.get("is_authenticated")?.value;
-  const isAuthenticated = isAuthenticatedCookie === "true";
+
+  const hasJwt = !!jwtToken && !isJwtExpired(jwtToken);
+  const isAuthenticated = isAuthenticatedCookie === "true" || hasJwt;
 
   if (!isAuthenticated) {
     const loginUrl = new URL("/auth/login", request.url);

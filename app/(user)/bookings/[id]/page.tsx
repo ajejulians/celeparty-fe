@@ -441,7 +441,7 @@ export default function BookingDetailPage({
 			}
 
 			const vendorAvatar =
-				"https://images.unsplash.com/photo-1516280440502-8610eb675005?w=128&h=128&fit=crop"; // Mock avatar
+				"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop"; // Mock avatar
 			const productImg =
 				product?.imageUrl ||
 				"https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&h=400&fit=crop";

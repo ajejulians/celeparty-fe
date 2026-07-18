@@ -9,7 +9,7 @@ const STATUS_MAP: Record<string, { label: string; className: string }> = {
 	active: {
 		label: "Aktif",
 		className:
-			"bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-emerald-200",
+			"bg-[#E2FAF4] text-[#00A884] border-transparent font-semibold",
 	},
 	sold_out: {
 		label: "Habis",
@@ -18,7 +18,7 @@ const STATUS_MAP: Record<string, { label: string; className: string }> = {
 	escrow_badge: {
 		label: "Escrow",
 		className:
-			"bg-amber-100 text-amber-800 hover:bg-amber-100 border-amber-200",
+			"bg-[#5D50C6] text-white border-transparent font-semibold",
 	},
 };
 

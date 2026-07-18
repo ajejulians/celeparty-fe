@@ -172,7 +172,7 @@ export default function ProductDetailPage({
 									isSoldOut ? "opacity-50 cursor-not-allowed" : ""
 								}`}
 							>
-								{isSoldOut ? "Stok Habis" : "Beli Sekarang"}
+								{isSoldOut ? "Stok Habis" : "Sewa Sekarang"}
 							</button>
 							<button
 								disabled={isSoldOut}

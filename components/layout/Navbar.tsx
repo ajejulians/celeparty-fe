@@ -62,12 +62,12 @@ export function Navbar() {
 	};
 
 	return (
-		<header className="sticky top-0 z-50 bg-c-blue/80 backdrop-blur-md border-b border-white/10 shadow-xl py-2">
+		<header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-sm py-2">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-14 gap-4 md:gap-8">
 					<Link
 						href="/"
-						className="flex items-center gap-2.5 font-quick font-bold text-2xl text-white tracking-wide shrink-0 group"
+						className="flex items-center gap-2.5 font-quick font-bold text-2xl text-neutral-900 tracking-wide shrink-0 group"
 					>
 						<img
 							src="/images/favicon.ico"
@@ -85,8 +85,8 @@ export function Navbar() {
 								className={cn(
 									"relative font-quick font-semibold text-sm py-2 transition-colors duration-200",
 									isActive(link.path)
-										? "text-white"
-										: "text-purple-100 hover:text-white",
+										? "text-neutral-900"
+										: "text-neutral-500 hover:text-neutral-900",
 								)}
 							>
 								{link.name}
@@ -103,9 +103,9 @@ export function Navbar() {
 								<input
 									type="text"
 									placeholder="Cari event, vendor..."
-									className="w-full pl-11 pr-4 py-2.5 text-sm font-sans rounded-full bg-white/10 text-white placeholder:text-white/60 border border-white/10 focus:outline-none focus:border-c-green/50 focus:bg-white/15 focus:ring-4 focus:ring-c-green/20 transition-all duration-300"
+									className="w-full pl-11 pr-4 py-2.5 text-sm font-sans rounded-full bg-neutral-100 text-neutral-900 placeholder:text-neutral-400 border border-neutral-200 focus:outline-none focus:border-c-green focus:bg-white focus:ring-4 focus:ring-c-green/20 transition-all duration-300"
 								/>
-								<span className="absolute left-4 top-2.5 text-white/50 group-focus-within:text-c-green transition-colors">
+								<span className="absolute left-4 top-2.5 text-neutral-400 group-focus-within:text-c-green transition-colors">
 									<Search size={18} />
 								</span>
 							</div>
@@ -115,17 +115,17 @@ export function Navbar() {
 							<div className="relative" ref={dropdownRef}>
 								<button
 									onClick={() => setDropdownOpen(!dropdownOpen)}
-									className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-c-green/30"
+									className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 transition-all focus:outline-none focus:ring-2 focus:ring-c-green/30"
 								>
 									<div className="w-8 h-8 rounded-full bg-c-blue-50 flex items-center justify-center overflow-hidden border-2 border-c-green">
 										<User size={18} className="text-c-blue" />
 									</div>
-									<span className="text-sm font-quick font-semibold text-white max-w-[100px] truncate">
+									<span className="text-sm font-quick font-semibold text-neutral-900 max-w-[100px] truncate">
 										Hi, Budi
 									</span>
 									<ChevronDown
 										size={16}
-										className={`text-white/70 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+										className={`text-neutral-500 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
 									/>
 								</button>
 
@@ -190,7 +190,7 @@ export function Navbar() {
 							<Button
 								variant="ghost"
 								size="icon"
-								className="md:hidden text-white hover:bg-white/10"
+								className="md:hidden text-neutral-700 hover:bg-neutral-100"
 								aria-label="Menu"
 							>
 								<Menu size={26} />
@@ -198,16 +198,16 @@ export function Navbar() {
 						</SheetTrigger>
 						<SheetContent
 							side="left"
-							className="w-[80vw] sm:w-[350px] bg-c-blue border-white/10 p-0 pt-0"
+							className="w-[80vw] sm:w-[350px] bg-white border-neutral-100 p-0 pt-0"
 						>
 							<div className="flex flex-col h-full">
-								<div className="flex items-center gap-2.5 px-6 py-5 border-b border-white/10">
+								<div className="flex items-center gap-2.5 px-6 py-5 border-b border-neutral-100">
 									<img
 										src="/images/favicon.ico"
 										alt="Celeparty Logo"
 										className="w-8 h-8 object-contain rounded-lg"
 									/>
-									<span className="font-quick font-bold text-xl text-white">
+									<span className="font-quick font-bold text-xl text-neutral-900">
 										CELEPARTY
 									</span>
 								</div>
@@ -218,9 +218,9 @@ export function Navbar() {
 											<input
 												type="text"
 												placeholder="Cari event, vendor..."
-												className="w-full pl-12 pr-4 py-3 text-sm font-sans rounded-xl bg-white/10 text-white placeholder:text-white/50 border border-white/10 focus:outline-none focus:border-c-green focus:bg-white/15 transition-all"
+												className="w-full pl-12 pr-4 py-3 text-sm font-sans rounded-xl bg-neutral-100 text-neutral-900 placeholder:text-neutral-400 border border-neutral-200 focus:outline-none focus:border-c-green focus:bg-white transition-all"
 											/>
-											<span className="absolute left-4 top-3 text-white/50">
+											<span className="absolute left-4 top-3 text-neutral-400">
 												<Search size={20} />
 											</span>
 										</div>
@@ -235,8 +235,8 @@ export function Navbar() {
 												className={cn(
 													"font-quick font-semibold text-lg py-4 px-4 rounded-xl transition-all duration-200 flex items-center justify-between",
 													isActive(link.path)
-														? "text-white bg-white/10"
-														: "text-purple-100 hover:text-white hover:bg-white/5",
+														? "text-neutral-900 bg-neutral-100"
+														: "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50",
 												)}
 											>
 												{link.name}
@@ -246,18 +246,18 @@ export function Navbar() {
 									))}
 								</nav>
 
-								<div className="px-4 py-6 border-t border-white/10 mt-auto">
+								<div className="px-4 py-6 border-t border-neutral-100 mt-auto">
 									{isLoggedIn ? (
 										<div className="space-y-2">
 											<div className="flex items-center gap-3 mb-4 px-2">
-												<div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-c-green">
+												<div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center overflow-hidden border-2 border-c-green">
 													<User size={20} className="text-c-blue" />
 												</div>
 												<div>
-													<p className="font-quick font-bold text-sm text-white">
+													<p className="font-quick font-bold text-sm text-neutral-900">
 														Budi Santoso
 													</p>
-													<p className="font-sans text-xs text-white/60">
+													<p className="font-sans text-xs text-neutral-500">
 														budi@example.com
 													</p>
 												</div>
@@ -265,7 +265,7 @@ export function Navbar() {
 											<SheetClose asChild>
 												<Link
 													href="/profile"
-													className="flex items-center gap-3 px-4 py-3 rounded-xl font-quick font-semibold text-sm text-purple-100 hover:bg-white/10 hover:text-white transition-all"
+													className="flex items-center gap-3 px-4 py-3 rounded-xl font-quick font-semibold text-sm text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-all"
 												>
 													<User size={18} className="text-c-green" /> Profile
 												</Link>
@@ -273,7 +273,7 @@ export function Navbar() {
 											<SheetClose asChild>
 												<Link
 													href="/settings"
-													className="flex items-center gap-3 px-4 py-3 rounded-xl font-quick font-semibold text-sm text-purple-100 hover:bg-white/10 hover:text-white transition-all"
+													className="flex items-center gap-3 px-4 py-3 rounded-xl font-quick font-semibold text-sm text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-all"
 												>
 													<Settings size={18} className="text-c-green" />{" "}
 													Settings
@@ -285,7 +285,7 @@ export function Navbar() {
 													session.logout();
 													window.location.href = "/";
 												}}
-												className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-quick font-semibold text-sm text-red-400 hover:bg-white/10 hover:text-red-300 transition-all"
+												className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-quick font-semibold text-sm text-red-500 hover:bg-red-50 transition-all"
 											>
 												<LogOut size={18} /> Keluar
 											</button>

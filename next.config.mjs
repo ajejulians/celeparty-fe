@@ -6,6 +6,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '1337',
+      },
     ],
   },
   devIndicators: {
