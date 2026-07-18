@@ -12,5 +12,15 @@
       "mode": "subagent",
       "model": "9router/aje-dev"
     }
+  },
+  "mcp": {
+    "stitch": {
+      "type": "remote",
+      "url": "https://stitch.googleapis.com/mcp",
+      "enabled": true,
+      "headers": {
+        "X-Goog-Api-Key": "AQ.Ab8RN6JA181e82Z7KJx1-CgEerrmeWFChGrh4wIx7gAosV_GsA"
+      }
+    }
   }
 }
