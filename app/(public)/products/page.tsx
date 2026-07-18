@@ -112,7 +112,7 @@ export default function ProductsPage() {
 
 	function FilterSidebar() {
 		return (
-			<div className="bg-[#1c1b1b] border border-white/5 rounded-2xl p-6 flex flex-col gap-6">
+			<div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 flex flex-col gap-6 shadow-sm">
 				<div className="flex items-center justify-between pb-2">
 					<h3 className="font-quick font-bold text-white">Filters</h3>
 					{hasActiveFilters && (
@@ -123,7 +123,7 @@ export default function ProductsPage() {
 								setSearch("");
 								setCurrentPage(1);
 							}}
-							className="text-xs font-sans text-[#d2f000] hover:underline flex items-center gap-1"
+							className="text-xs font-sans text-c-green hover:underline flex items-center gap-1"
 						>
 							<X size={12} /> Reset
 						</button>
@@ -131,13 +131,13 @@ export default function ProductsPage() {
 				</div>
 
 				<div>
-					<label className="block font-sans text-xs font-bold text-[#cec3d3] uppercase tracking-wider mb-2">
+					<label className="block font-sans text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2">
 						Kata Kunci
 					</label>
 					<div className="relative">
 						<Search
 							size={18}
-							className="absolute left-3 top-1/2 -translate-y-1/2 text-[#978d9d]"
+							className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"
 						/>
 						<input
 							type="text"
@@ -147,13 +147,13 @@ export default function ProductsPage() {
 								setSearch(e.target.value);
 								setCurrentPage(1);
 							}}
-							className="w-full bg-[#2a2a2a] border border-[#4c4451] rounded-lg pl-10 pr-4 py-2.5 text-sm font-sans text-[#e5e2e1] placeholder:text-[#978d9d] focus:border-[#d2f000] focus:ring-1 focus:ring-[#d2f000]/20 outline-none transition-all"
+							className="w-full bg-neutral-800 border border-neutral-700 rounded-lg pl-10 pr-4 py-2.5 text-sm font-sans text-white placeholder:text-neutral-500 focus:border-c-blue focus:ring-1 focus:ring-c-blue/15 outline-none transition-all"
 						/>
 					</div>
 				</div>
 
 				<div>
-					<label className="block font-sans text-xs font-bold text-[#cec3d3] uppercase tracking-wider mb-3">
+					<label className="block font-sans text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">
 						Kategori
 					</label>
 					<div className="space-y-2.5">
@@ -168,9 +168,9 @@ export default function ProductsPage() {
 										toggleCategory(cat);
 										setCurrentPage(1);
 									}}
-									className="border-[#4c4451] data-[state=checked]:bg-[#d2f000] data-[state=checked]:border-[#d2f000] data-[state=checked]:text-[#191e00]"
+									className="border-neutral-700 data-[state=checked]:bg-c-blue data-[state=checked]:border-c-blue"
 								/>
-								<span className="font-sans text-sm text-[#cec3d3] group-hover:text-white transition-colors">
+								<span className="font-sans text-sm text-neutral-400 group-hover:text-white transition-colors">
 									{cat}
 								</span>
 							</label>
@@ -179,7 +179,7 @@ export default function ProductsPage() {
 				</div>
 
 				<div>
-					<label className="block font-sans text-xs font-bold text-[#cec3d3] uppercase tracking-wider mb-3">
+					<label className="block font-sans text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">
 						Wilayah
 					</label>
 					<div className="space-y-2.5">
@@ -194,9 +194,9 @@ export default function ProductsPage() {
 										toggleCity(city);
 										setCurrentPage(1);
 									}}
-									className="border-[#4c4451] data-[state=checked]:bg-[#d2f000] data-[state=checked]:border-[#d2f000] data-[state=checked]:text-[#191e00]"
+									className="border-neutral-700 data-[state=checked]:bg-c-blue data-[state=checked]:border-c-blue"
 								/>
-								<span className="font-sans text-sm text-[#cec3d3] group-hover:text-white transition-colors">
+								<span className="font-sans text-sm text-neutral-400 group-hover:text-white transition-colors">
 									{city}
 								</span>
 							</label>
@@ -205,7 +205,7 @@ export default function ProductsPage() {
 				</div>
 
 				<div>
-					<label className="block font-sans text-xs font-bold text-[#cec3d3] uppercase tracking-wider mb-3">
+					<label className="block font-sans text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">
 						Harga
 					</label>
 					<div className="space-y-2.5">
@@ -220,9 +220,9 @@ export default function ProductsPage() {
 										setPriceRange(range.value);
 										setCurrentPage(1);
 									}}
-									className="border-[#4c4451] data-[state=checked]:bg-[#d2f000] data-[state=checked]:border-[#d2f000] data-[state=checked]:text-[#191e00]"
+									className="border-neutral-700 data-[state=checked]:bg-c-blue data-[state=checked]:border-c-blue"
 								/>
-								<span className="font-sans text-sm text-[#cec3d3] group-hover:text-white transition-colors">
+								<span className="font-sans text-sm text-neutral-400 group-hover:text-white transition-colors">
 									{range.label}
 								</span>
 							</label>
@@ -233,7 +233,7 @@ export default function ProductsPage() {
 				<button
 					type="button"
 					onClick={() => setMobileFilterOpen(false)}
-					className="lg:hidden w-full bg-[#d2f000] text-[#191e00] py-3 rounded-lg font-quick font-bold text-sm hover:bg-[#b8d300] transition-colors"
+					className="lg:hidden w-full bg-c-blue text-white py-3 rounded-lg font-quick font-bold text-sm hover:bg-c-blue/90 transition-opacity"
 				>
 					Terapkan Filter
 				</button>
@@ -242,14 +242,14 @@ export default function ProductsPage() {
 	}
 
 	return (
-		<div className="min-h-screen">
+		<div className="bg-neutral-50 min-h-screen">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
 				<section className="mb-10">
 					<motion.h1
 						initial={{ opacity: 0, y: -10 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.5 }}
-						className="font-quick font-extrabold text-4xl md:text-5xl text-white mb-4 tracking-tight"
+						className="font-quick font-extrabold text-4xl md:text-5xl text-c-blue mb-4 tracking-tight"
 					>
 						Katalog Produk
 					</motion.h1>
@@ -257,7 +257,7 @@ export default function ProductsPage() {
 						initial={{ opacity: 0, y: -10 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.5, delay: 0.1 }}
-						className="font-sans text-lg text-[#cec3d3] max-w-2xl"
+						className="font-sans text-lg text-neutral-500 max-w-2xl"
 					>
 						Temukan jasa event terbaik untuk perayaan Anda
 					</motion.p>
@@ -274,12 +274,12 @@ export default function ProductsPage() {
 						<button
 							type="button"
 							onClick={() => setMobileFilterOpen(true)}
-							className="inline-flex items-center gap-2 bg-[#1c1b1b] border border-white/5 text-[#cec3d3] px-4 py-2.5 rounded-lg text-sm font-sans hover:border-[#d2f000]/30 transition-colors"
+							className="inline-flex items-center gap-2 bg-white border border-neutral-200 text-neutral-700 px-4 py-2.5 rounded-lg text-sm font-sans hover:border-c-blue/50 transition-colors shadow-sm"
 						>
 							<SlidersHorizontal size={16} />
 							Filter
 							{hasActiveFilters && (
-								<span className="w-2 h-2 rounded-full bg-[#d2f000]" />
+								<span className="w-2 h-2 rounded-full bg-c-blue" />
 							)}
 						</button>
 					</div>
@@ -287,21 +287,21 @@ export default function ProductsPage() {
 					{mobileFilterOpen && (
 						<div className="lg:hidden fixed inset-0 z-50">
 							<div
-								className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+								className="absolute inset-0 bg-black/50 backdrop-blur-sm"
 								onClick={() => setMobileFilterOpen(false)}
 								onKeyDown={() => {}}
 							/>
-							<div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-[#131313] p-6 overflow-y-auto border-l border-white/5">
+							<div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white p-6 overflow-y-auto border-l border-neutral-200">
 								<div className="flex items-center justify-between mb-6">
-									<h2 className="font-quick font-bold text-lg text-white">
+									<h2 className="font-quick font-bold text-lg text-neutral-900">
 										Filters
 									</h2>
 									<button
 										type="button"
 										onClick={() => setMobileFilterOpen(false)}
-										className="p-2 rounded-full hover:bg-white/5 transition-colors"
+										className="p-2 rounded-full hover:bg-neutral-100 transition-colors"
 									>
-										<X size={20} className="text-[#cec3d3]" />
+										<X size={20} className="text-neutral-500" />
 									</button>
 								</div>
 								<FilterSidebar />
@@ -311,21 +311,21 @@ export default function ProductsPage() {
 
 					<div className="flex-1 min-w-0">
 						<div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-							<p className="text-sm font-sans text-[#cec3d3]">
+							<p className="text-sm font-sans text-neutral-500">
 								Menampilkan {filteredProducts.length} produk
 							</p>
 							<Select value={sortBy} onValueChange={setSortBy}>
-								<SelectTrigger className="w-[220px] h-10 text-sm bg-[#1c1b1b] border border-white/5 text-[#cec3d3] focus:border-[#d2f000] focus:ring-1 focus:ring-[#d2f000]/20">
+								<SelectTrigger className="w-[220px] h-10 text-sm bg-white border border-neutral-200 text-neutral-700 focus:border-c-blue focus:ring-1 focus:ring-c-blue/15">
 									<SelectValue placeholder="Urutkan" />
 								</SelectTrigger>
-								<SelectContent className="bg-[#1c1b1b] border border-white/10 text-[#cec3d3]">
-									<SelectItem value="newest" className="focus:bg-[#2a2a2a] focus:text-[#e5e2e1]">
+								<SelectContent className="bg-white border border-neutral-200 text-neutral-700">
+									<SelectItem value="newest" className="focus:bg-neutral-100 focus:text-neutral-900">
 										Urutkan: Terbaru
 									</SelectItem>
-									<SelectItem value="price-low" className="focus:bg-[#2a2a2a] focus:text-[#e5e2e1]">
+									<SelectItem value="price-low" className="focus:bg-neutral-100 focus:text-neutral-900">
 										Harga: Rendah ke Tinggi
 									</SelectItem>
-									<SelectItem value="price-high" className="focus:bg-[#2a2a2a] focus:text-[#e5e2e1]">
+									<SelectItem value="price-high" className="focus:bg-neutral-100 focus:text-neutral-900">
 										Harga: Tinggi ke Rendah
 									</SelectItem>
 								</SelectContent>
@@ -337,14 +337,14 @@ export default function ProductsPage() {
 								{Array.from({ length: 8 }).map((_, i) => (
 									<div
 										key={i}
-										className="bg-[#1c1b1b] rounded-2xl border border-white/5 overflow-hidden"
+										className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm"
 									>
-										<Skeleton className="aspect-[4/3] rounded-none bg-[#2a2a2a]" />
+										<Skeleton className="aspect-[4/3] rounded-none" />
 										<div className="p-4 space-y-3">
-											<Skeleton className="h-3 w-24 bg-[#2a2a2a]" />
-											<Skeleton className="h-5 w-full bg-[#2a2a2a]" />
-											<Skeleton className="h-5 w-3/4 bg-[#2a2a2a]" />
-											<Skeleton className="h-9 w-full mt-3 bg-[#2a2a2a]" />
+											<Skeleton className="h-3 w-24" />
+											<Skeleton className="h-5 w-full" />
+											<Skeleton className="h-5 w-3/4" />
+											<Skeleton className="h-9 w-full mt-3" />
 										</div>
 									</div>
 								))}
@@ -363,13 +363,13 @@ export default function ProductsPage() {
 
 						{filteredProducts.length === 0 && !isLoading && (
 							<div className="flex flex-col items-center justify-center py-20 text-center">
-								<div className="w-20 h-20 bg-[#1c1b1b] rounded-full flex items-center justify-center mb-4 border border-white/5">
-									<Search size={32} className="text-[#978d9d]" />
+								<div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+									<Search size={32} className="text-neutral-400" />
 								</div>
-								<h3 className="font-quick font-semibold text-white text-lg mb-1">
+								<h3 className="font-quick font-semibold text-neutral-900 text-lg mb-1">
 									Tidak ada produk ditemukan
 								</h3>
-								<p className="font-sans text-sm text-[#cec3d3] max-w-sm mb-4">
+								<p className="font-sans text-sm text-neutral-500 max-w-sm mb-4">
 									Coba ubah filter pencarian Anda atau reset semua filter.
 								</p>
 								<button
@@ -379,7 +379,7 @@ export default function ProductsPage() {
 										setSearch("");
 										setCurrentPage(1);
 									}}
-									className="font-quick font-semibold text-sm text-[#d2f000] hover:underline"
+									className="font-quick font-semibold text-sm text-c-blue hover:underline"
 								>
 									Reset Filter
 								</button>
@@ -392,7 +392,7 @@ export default function ProductsPage() {
 									type="button"
 									onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
 									disabled={currentPage === 1}
-									className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 hover:border-[#d2f000] transition-colors text-[#cec3d3] disabled:opacity-40 disabled:cursor-not-allowed"
+									className="w-10 h-10 flex items-center justify-center rounded-lg border border-neutral-200 hover:border-c-blue transition-colors text-neutral-500 disabled:opacity-40 disabled:cursor-not-allowed"
 								>
 									<ChevronLeft size={18} />
 								</button>
@@ -404,8 +404,8 @@ export default function ProductsPage() {
 											onClick={() => setCurrentPage(page)}
 											className={`w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm transition-colors ${
 												page === currentPage
-													? "bg-[#d2f000] text-[#191e00]"
-													: "border border-white/10 hover:border-[#d2f000] text-[#cec3d3]"
+													? "bg-c-blue text-white"
+													: "border border-neutral-200 hover:border-c-blue text-neutral-600"
 											}`}
 										>
 											{page}
@@ -418,7 +418,7 @@ export default function ProductsPage() {
 										setCurrentPage((p) => Math.min(totalPages, p + 1))
 									}
 									disabled={currentPage === totalPages}
-									className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 hover:border-[#d2f000] transition-colors text-[#cec3d3] disabled:opacity-40 disabled:cursor-not-allowed"
+									className="w-10 h-10 flex items-center justify-center rounded-lg border border-neutral-200 hover:border-c-blue transition-colors text-neutral-500 disabled:opacity-40 disabled:cursor-not-allowed"
 								>
 									<ChevronRight size={18} />
 								</button>
