@@ -113,6 +113,10 @@ export default function ProductDetailPage({
 			);
 			return;
 		}
+		if (session.role === "vendor" || session.role === "admin") {
+			toast.error("Akun vendor/admin tidak dapat melakukan penyewaan. Silakan gunakan akun customer.");
+			return;
+		}
 		setShowForm(true);
 	}
 
