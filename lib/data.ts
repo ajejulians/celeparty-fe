@@ -558,7 +558,7 @@ export const events: EventData[] = [
 		location: "GBK Senayan, Jakarta",
 		date: "2026-08-20",
 		time: "15:00 - 23:00 WIB",
-		imageUrl: "https://placehold.co/800x600/3E2882/FFF.png?text=Music+Festival",
+		imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&h=600&fit=crop",
 		priceFrom: 250000,
 		organizer: "Live Nation Indonesia",
 		description:
@@ -572,7 +572,7 @@ export const events: EventData[] = [
 		location: "JCC Senayan, Jakarta",
 		date: "2026-09-10",
 		time: "09:00 - 17:00 WIB",
-		imageUrl: "https://placehold.co/800x600/3E2882/FFF.png?text=Tech+Summit",
+		imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop",
 		priceFrom: 150000,
 		organizer: "TechIndo Media",
 		description:
@@ -586,7 +586,7 @@ export const events: EventData[] = [
 		location: "Lapangan Banteng, Jakarta",
 		date: "2026-07-25",
 		time: "10:00 - 22:00 WIB",
-		imageUrl: "https://placehold.co/800x600/3E2882/FFF.png?text=Food+Carnival",
+		imageUrl: "https://images.unsplash.com/photo-1555244162-803834f70033?w=800&h=600&fit=crop",
 		priceFrom: 35000,
 		organizer: "Kuliner Kita",
 		description:
@@ -600,7 +600,7 @@ export const events: EventData[] = [
 		location: "M Bloc Space, Jakarta",
 		date: "2026-08-05",
 		time: "13:00 - 21:00 WIB",
-		imageUrl: "https://placehold.co/800x600/3E2882/FFF.png?text=Art+Market",
+		imageUrl: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&h=600&fit=crop",
 		priceFrom: 50000,
 		organizer: "Kolektif Seni JKT",
 		description:

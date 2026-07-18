@@ -1,15 +1,9 @@
 "use client";
 
-import { X } from "lucide-react";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight, Search, SlidersHorizontal, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { TicketCard } from "@/components/product/TicketCard";
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Select,
@@ -50,9 +44,14 @@ const priceRanges = [
 	},
 ];
 
+const ITEMS_PER_PAGE = 8;
+
 export default function ProductsPage() {
-	const [isLoading, _setIsLoading] = useState(false);
+	const [isLoading] = useState(false);
 	const [sortBy, setSortBy] = useState("newest");
+	const [search, setSearch] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
 	const {
 		selectedCategories,
@@ -67,8 +66,21 @@ export default function ProductsPage() {
 	const activeFilterCount =
 		selectedCategories.length + selectedCities.length + (priceRange ? 1 : 0);
 
+	const hasActiveFilters = activeFilterCount > 0 || search.length > 0;
+
 	const filteredProducts = useMemo(() => {
 		let result = [...products];
+
+		if (search) {
+			const q = search.toLowerCase();
+			result = result.filter(
+				(p) =>
+					p.name.toLowerCase().includes(q) ||
+					p.category.toLowerCase().includes(q) ||
+					p.city.toLowerCase().includes(q) ||
+					p.vendorName.toLowerCase().includes(q),
+			);
+		}
 
 		if (selectedCategories.length > 0) {
 			result = result.filter((p) => selectedCategories.includes(p.category));
@@ -90,186 +102,328 @@ export default function ProductsPage() {
 		}
 
 		return result;
-	}, [selectedCategories, selectedCities, priceRange, sortBy]);
+	}, [selectedCategories, selectedCities, priceRange, sortBy, search]);
+
+	const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+	const paginatedProducts = filteredProducts.slice(
+		(currentPage - 1) * ITEMS_PER_PAGE,
+		currentPage * ITEMS_PER_PAGE,
+	);
+
+	function FilterSidebar() {
+		return (
+			<div className="bg-[#1c1b1b] border border-white/5 rounded-2xl p-6 flex flex-col gap-6">
+				<div className="flex items-center justify-between pb-2">
+					<h3 className="font-quick font-bold text-white">Filters</h3>
+					{hasActiveFilters && (
+						<button
+							type="button"
+							onClick={() => {
+								resetFilters();
+								setSearch("");
+								setCurrentPage(1);
+							}}
+							className="text-xs font-sans text-[#d2f000] hover:underline flex items-center gap-1"
+						>
+							<X size={12} /> Reset
+						</button>
+					)}
+				</div>
+
+				<div>
+					<label className="block font-sans text-xs font-bold text-[#cec3d3] uppercase tracking-wider mb-2">
+						Kata Kunci
+					</label>
+					<div className="relative">
+						<Search
+							size={18}
+							className="absolute left-3 top-1/2 -translate-y-1/2 text-[#978d9d]"
+						/>
+						<input
+							type="text"
+							placeholder="Cari vendor..."
+							value={search}
+							onChange={(e) => {
+								setSearch(e.target.value);
+								setCurrentPage(1);
+							}}
+							className="w-full bg-[#2a2a2a] border border-[#4c4451] rounded-lg pl-10 pr-4 py-2.5 text-sm font-sans text-[#e5e2e1] placeholder:text-[#978d9d] focus:border-[#d2f000] focus:ring-1 focus:ring-[#d2f000]/20 outline-none transition-all"
+						/>
+					</div>
+				</div>
+
+				<div>
+					<label className="block font-sans text-xs font-bold text-[#cec3d3] uppercase tracking-wider mb-3">
+						Kategori
+					</label>
+					<div className="space-y-2.5">
+						{categories.map((cat) => (
+							<label
+								key={cat}
+								className="flex items-center gap-3 cursor-pointer group"
+							>
+								<Checkbox
+									checked={selectedCategories.includes(cat)}
+									onCheckedChange={() => {
+										toggleCategory(cat);
+										setCurrentPage(1);
+									}}
+									className="border-[#4c4451] data-[state=checked]:bg-[#d2f000] data-[state=checked]:border-[#d2f000] data-[state=checked]:text-[#191e00]"
+								/>
+								<span className="font-sans text-sm text-[#cec3d3] group-hover:text-white transition-colors">
+									{cat}
+								</span>
+							</label>
+						))}
+					</div>
+				</div>
+
+				<div>
+					<label className="block font-sans text-xs font-bold text-[#cec3d3] uppercase tracking-wider mb-3">
+						Wilayah
+					</label>
+					<div className="space-y-2.5">
+						{cities.map((city) => (
+							<label
+								key={city}
+								className="flex items-center gap-3 cursor-pointer group"
+							>
+								<Checkbox
+									checked={selectedCities.includes(city)}
+									onCheckedChange={() => {
+										toggleCity(city);
+										setCurrentPage(1);
+									}}
+									className="border-[#4c4451] data-[state=checked]:bg-[#d2f000] data-[state=checked]:border-[#d2f000] data-[state=checked]:text-[#191e00]"
+								/>
+								<span className="font-sans text-sm text-[#cec3d3] group-hover:text-white transition-colors">
+									{city}
+								</span>
+							</label>
+						))}
+					</div>
+				</div>
+
+				<div>
+					<label className="block font-sans text-xs font-bold text-[#cec3d3] uppercase tracking-wider mb-3">
+						Harga
+					</label>
+					<div className="space-y-2.5">
+						{priceRanges.map((range) => (
+							<label
+								key={range.value}
+								className="flex items-center gap-3 cursor-pointer group"
+							>
+								<Checkbox
+									checked={priceRange === range.value}
+									onCheckedChange={() => {
+										setPriceRange(range.value);
+										setCurrentPage(1);
+									}}
+									className="border-[#4c4451] data-[state=checked]:bg-[#d2f000] data-[state=checked]:border-[#d2f000] data-[state=checked]:text-[#191e00]"
+								/>
+								<span className="font-sans text-sm text-[#cec3d3] group-hover:text-white transition-colors">
+									{range.label}
+								</span>
+							</label>
+						))}
+					</div>
+				</div>
+
+				<button
+					type="button"
+					onClick={() => setMobileFilterOpen(false)}
+					className="lg:hidden w-full bg-[#d2f000] text-[#191e00] py-3 rounded-lg font-quick font-bold text-sm hover:bg-[#b8d300] transition-colors"
+				>
+					Terapkan Filter
+				</button>
+			</div>
+		);
+	}
 
 	return (
-		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-			<div className="mb-8">
-				<h1 className="font-quick font-bold text-3xl text-neutral-900">
-					Katalog Produk
-				</h1>
-				<p className="font-sans text-sm text-neutral-500 mt-1">
-					Temukan jasa event terbaik untuk perayaan Anda
-				</p>
-			</div>
+		<div className="min-h-screen">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
+				<section className="mb-10">
+					<motion.h1
+						initial={{ opacity: 0, y: -10 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5 }}
+						className="font-quick font-extrabold text-4xl md:text-5xl text-white mb-4 tracking-tight"
+					>
+						Katalog Produk
+					</motion.h1>
+					<motion.p
+						initial={{ opacity: 0, y: -10 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5, delay: 0.1 }}
+						className="font-sans text-lg text-[#cec3d3] max-w-2xl"
+					>
+						Temukan jasa event terbaik untuk perayaan Anda
+					</motion.p>
+				</section>
 
-			<div className="flex gap-8">
-				<aside className="hidden lg:block w-64 shrink-0 sticky top-24 self-start">
-					<div className="bg-white rounded-xl border border-neutral-200 p-5">
-						<div className="flex items-center justify-between mb-4">
-							<h3 className="font-quick font-bold text-sm text-neutral-900">
-								Filter
-							</h3>
-							{activeFilterCount > 0 && (
-								<button
-									onClick={resetFilters}
-									className="text-xs font-sans text-c-blue hover:underline flex items-center gap-1"
-								>
-									<X size={12} /> Reset
-								</button>
-							)}
+				<div className="flex flex-col lg:flex-row gap-6">
+					<aside className="lg:w-64 shrink-0 hidden lg:block">
+						<div className="sticky top-24">
+							<FilterSidebar />
 						</div>
+					</aside>
 
-						<Accordion
-							type="multiple"
-							defaultValue={["categories", "cities", "prices"]}
+					<div className="lg:hidden mb-4">
+						<button
+							type="button"
+							onClick={() => setMobileFilterOpen(true)}
+							className="inline-flex items-center gap-2 bg-[#1c1b1b] border border-white/5 text-[#cec3d3] px-4 py-2.5 rounded-lg text-sm font-sans hover:border-[#d2f000]/30 transition-colors"
 						>
-							<AccordionItem value="categories" className="border-neutral-100">
-								<AccordionTrigger className="font-quick font-semibold text-sm text-neutral-900 py-3 hover:no-underline">
-									Kategori
-								</AccordionTrigger>
-								<AccordionContent>
-									<div className="space-y-2.5">
-										{categories.map((cat) => (
-											<label
-												key={cat}
-												className="flex items-center gap-2.5 cursor-pointer group"
-											>
-												<Checkbox
-													checked={selectedCategories.includes(cat)}
-													onCheckedChange={() => toggleCategory(cat)}
-													className="border-neutral-300 data-[state=checked]:bg-c-blue data-[state=checked]:border-c-blue"
-												/>
-												<span className="text-sm font-sans text-neutral-700 group-hover:text-neutral-900 transition-colors">
-													{cat}
-												</span>
-											</label>
-										))}
-									</div>
-								</AccordionContent>
-							</AccordionItem>
-
-							<AccordionItem value="cities" className="border-neutral-100">
-								<AccordionTrigger className="font-quick font-semibold text-sm text-neutral-900 py-3 hover:no-underline">
-									Wilayah
-								</AccordionTrigger>
-								<AccordionContent>
-									<div className="space-y-2.5">
-										{cities.map((city) => (
-											<label
-												key={city}
-												className="flex items-center gap-2.5 cursor-pointer group"
-											>
-												<Checkbox
-													checked={selectedCities.includes(city)}
-													onCheckedChange={() => toggleCity(city)}
-													className="border-neutral-300 data-[state=checked]:bg-c-blue data-[state=checked]:border-c-blue"
-												/>
-												<span className="text-sm font-sans text-neutral-700 group-hover:text-neutral-900 transition-colors">
-													{city}
-												</span>
-											</label>
-										))}
-									</div>
-								</AccordionContent>
-							</AccordionItem>
-
-							<AccordionItem value="prices" className="border-b-0">
-								<AccordionTrigger className="font-quick font-semibold text-sm text-neutral-900 py-3 hover:no-underline">
-									Harga
-								</AccordionTrigger>
-								<AccordionContent>
-									<div className="space-y-2.5">
-										{priceRanges.map((range) => (
-											<label
-												key={range.value}
-												className="flex items-center gap-2.5 cursor-pointer group"
-											>
-												<Checkbox
-													checked={priceRange === range.value}
-													onCheckedChange={() => setPriceRange(range.value)}
-													className="rounded-full border-neutral-300 data-[state=checked]:bg-c-blue data-[state=checked]:border-c-blue"
-												/>
-												<span className="text-sm font-sans text-neutral-700 group-hover:text-neutral-900 transition-colors">
-													{range.label}
-												</span>
-											</label>
-										))}
-									</div>
-								</AccordionContent>
-							</AccordionItem>
-						</Accordion>
-					</div>
-				</aside>
-
-				<div className="flex-1 min-w-0">
-					<div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-						<p className="text-sm font-sans text-neutral-500">
-							Menampilkan {filteredProducts.length} produk
-						</p>
-						<Select value={sortBy} onValueChange={setSortBy}>
-							<SelectTrigger className="w-[220px] h-9 text-sm">
-								<SelectValue placeholder="Urutkan" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="newest">Urutkan: Terbaru</SelectItem>
-								<SelectItem value="price-low">
-									Harga: Rendah ke Tinggi
-								</SelectItem>
-								<SelectItem value="price-high">
-									Harga: Tinggi ke Rendah
-								</SelectItem>
-							</SelectContent>
-						</Select>
+							<SlidersHorizontal size={16} />
+							Filter
+							{hasActiveFilters && (
+								<span className="w-2 h-2 rounded-full bg-[#d2f000]" />
+							)}
+						</button>
 					</div>
 
-					{isLoading ? (
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-							{Array.from({ length: 8 }).map((_, i) => (
-								<div
-									key={i}
-									className="bg-white rounded-lg border border-neutral-100 overflow-hidden"
-								>
-									<Skeleton className="aspect-[4/3] rounded-none" />
-									<div className="p-4 space-y-3">
-										<Skeleton className="h-3 w-24" />
-										<Skeleton className="h-5 w-full" />
-										<Skeleton className="h-5 w-3/4" />
-										<Skeleton className="h-9 w-full mt-3" />
-									</div>
+					{mobileFilterOpen && (
+						<div className="lg:hidden fixed inset-0 z-50">
+							<div
+								className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+								onClick={() => setMobileFilterOpen(false)}
+								onKeyDown={() => {}}
+							/>
+							<div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-[#131313] p-6 overflow-y-auto border-l border-white/5">
+								<div className="flex items-center justify-between mb-6">
+									<h2 className="font-quick font-bold text-lg text-white">
+										Filters
+									</h2>
+									<button
+										type="button"
+										onClick={() => setMobileFilterOpen(false)}
+										className="p-2 rounded-full hover:bg-white/5 transition-colors"
+									>
+										<X size={20} className="text-[#cec3d3]" />
+									</button>
 								</div>
-							))}
-						</div>
-					) : (
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-							{filteredProducts.map((product) => (
-								<TicketCard
-									key={product.slug}
-									product={product}
-									variant="catalog"
-								/>
-							))}
+								<FilterSidebar />
+							</div>
 						</div>
 					)}
 
-					<div className="flex items-center justify-center gap-2 mt-10">
-						<Button
-							variant="outline"
-							size="sm"
-							className="w-9 h-9 p-0"
-							disabled
-						>
-							&laquo;
-						</Button>
-						<Button variant="default" size="sm" className="w-9 h-9 p-0">
-							1
-						</Button>
-						<Button variant="outline" size="sm" className="w-9 h-9 p-0">
-							2
-						</Button>
-						<Button variant="outline" size="sm" className="w-9 h-9 p-0">
-							&raquo;
-						</Button>
+					<div className="flex-1 min-w-0">
+						<div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+							<p className="text-sm font-sans text-[#cec3d3]">
+								Menampilkan {filteredProducts.length} produk
+							</p>
+							<Select value={sortBy} onValueChange={setSortBy}>
+								<SelectTrigger className="w-[220px] h-10 text-sm bg-[#1c1b1b] border border-white/5 text-[#cec3d3] focus:border-[#d2f000] focus:ring-1 focus:ring-[#d2f000]/20">
+									<SelectValue placeholder="Urutkan" />
+								</SelectTrigger>
+								<SelectContent className="bg-[#1c1b1b] border border-white/10 text-[#cec3d3]">
+									<SelectItem value="newest" className="focus:bg-[#2a2a2a] focus:text-[#e5e2e1]">
+										Urutkan: Terbaru
+									</SelectItem>
+									<SelectItem value="price-low" className="focus:bg-[#2a2a2a] focus:text-[#e5e2e1]">
+										Harga: Rendah ke Tinggi
+									</SelectItem>
+									<SelectItem value="price-high" className="focus:bg-[#2a2a2a] focus:text-[#e5e2e1]">
+										Harga: Tinggi ke Rendah
+									</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+
+						{isLoading ? (
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+								{Array.from({ length: 8 }).map((_, i) => (
+									<div
+										key={i}
+										className="bg-[#1c1b1b] rounded-2xl border border-white/5 overflow-hidden"
+									>
+										<Skeleton className="aspect-[4/3] rounded-none bg-[#2a2a2a]" />
+										<div className="p-4 space-y-3">
+											<Skeleton className="h-3 w-24 bg-[#2a2a2a]" />
+											<Skeleton className="h-5 w-full bg-[#2a2a2a]" />
+											<Skeleton className="h-5 w-3/4 bg-[#2a2a2a]" />
+											<Skeleton className="h-9 w-full mt-3 bg-[#2a2a2a]" />
+										</div>
+									</div>
+								))}
+							</div>
+						) : (
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+								{paginatedProducts.map((product) => (
+									<TicketCard
+										key={product.slug}
+										product={product}
+										variant="catalog"
+									/>
+								))}
+							</div>
+						)}
+
+						{filteredProducts.length === 0 && !isLoading && (
+							<div className="flex flex-col items-center justify-center py-20 text-center">
+								<div className="w-20 h-20 bg-[#1c1b1b] rounded-full flex items-center justify-center mb-4 border border-white/5">
+									<Search size={32} className="text-[#978d9d]" />
+								</div>
+								<h3 className="font-quick font-semibold text-white text-lg mb-1">
+									Tidak ada produk ditemukan
+								</h3>
+								<p className="font-sans text-sm text-[#cec3d3] max-w-sm mb-4">
+									Coba ubah filter pencarian Anda atau reset semua filter.
+								</p>
+								<button
+									type="button"
+									onClick={() => {
+										resetFilters();
+										setSearch("");
+										setCurrentPage(1);
+									}}
+									className="font-quick font-semibold text-sm text-[#d2f000] hover:underline"
+								>
+									Reset Filter
+								</button>
+							</div>
+						)}
+
+						{totalPages > 1 && (
+							<nav className="flex items-center justify-center gap-2 mt-16">
+								<button
+									type="button"
+									onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+									disabled={currentPage === 1}
+									className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 hover:border-[#d2f000] transition-colors text-[#cec3d3] disabled:opacity-40 disabled:cursor-not-allowed"
+								>
+									<ChevronLeft size={18} />
+								</button>
+								{Array.from({ length: totalPages }, (_, i) => i + 1).map(
+									(page) => (
+										<button
+											key={page}
+											type="button"
+											onClick={() => setCurrentPage(page)}
+											className={`w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm transition-colors ${
+												page === currentPage
+													? "bg-[#d2f000] text-[#191e00]"
+													: "border border-white/10 hover:border-[#d2f000] text-[#cec3d3]"
+											}`}
+										>
+											{page}
+										</button>
+									),
+								)}
+								<button
+									type="button"
+									onClick={() =>
+										setCurrentPage((p) => Math.min(totalPages, p + 1))
+									}
+									disabled={currentPage === totalPages}
+									className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 hover:border-[#d2f000] transition-colors text-[#cec3d3] disabled:opacity-40 disabled:cursor-not-allowed"
+								>
+									<ChevronRight size={18} />
+								</button>
+							</nav>
+						)}
 					</div>
 				</div>
 			</div>

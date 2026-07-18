@@ -15,10 +15,11 @@
   },
   "mcp": {
     "stitch": {
-      "type": "remote",
+      "type": "http",
       "url": "https://stitch.googleapis.com/mcp",
       "enabled": true,
       "headers": {
+        "Accept": "application/json",
         "X-Goog-Api-Key": "AQ.Ab8RN6JA181e82Z7KJx1-CgEerrmeWFChGrh4wIx7gAosV_GsA"
       }
     }
