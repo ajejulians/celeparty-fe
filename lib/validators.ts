@@ -29,6 +29,25 @@ export const checkoutFormSchema = z.object({
 
 export type CheckoutFormData = z.infer<typeof checkoutFormSchema>;
 
+export const rentalFormSchema = z.object({
+	customerName: z
+		.string()
+		.min(2, "Nama minimal 2 karakter")
+		.max(100, "Nama maksimal 100 karakter"),
+	customerEmail: z.string().email("Format email tidak valid"),
+	whatsapp: z
+		.string()
+		.regex(
+			/^08\d{8,12}$/,
+			"Format WhatsApp tidak valid (contoh: 081234567890)",
+		),
+	eventDate: z.string().min(1, "Tanggal event wajib diisi"),
+	eventType: z.string().min(1, "Jenis acara wajib diisi"),
+	note: z.string().optional(),
+});
+
+export type RentalFormData = z.infer<typeof rentalFormSchema>;
+
 export const identityTypeLabels: Record<string, string> = {
 	KTP: "KTP",
 	SIM: "SIM",
