@@ -66,7 +66,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getProductsByVendor, type Product } from "@/lib/data";
+import type { Product } from "@/lib/data";
 import { useSession, withAuth } from "@/lib/session";
 import { formatCurrency } from "@/lib/utils";
 import { useVendorProductStore } from "@/lib/vendor-product-store";
@@ -95,7 +95,7 @@ function ProductThumb({ product }: { product: Product }) {
 function VendorProductsPage() {
 	const session = useSession();
 	const storeProducts = useVendorProductStore((s) => s.products);
-	const setProducts = useVendorProductStore((s) => s.setProducts);
+	const fetchVendorProducts = useVendorProductStore((s) => s.fetchVendorProducts);
 	const openEditModal = useVendorProductStore((s) => s.openEditModal);
 	const deleteProducts = useVendorProductStore((s) => s.deleteProducts);
 	const updateProductStatus = useVendorProductStore(
@@ -122,9 +122,8 @@ function VendorProductsPage() {
 
 	useEffect(() => {
 		if (!session.vendorId) return;
-		const vendorProducts = getProductsByVendor(session.vendorId);
-		setProducts(vendorProducts);
-	}, [session.vendorId, setProducts]);
+		fetchVendorProducts(session.vendorId);
+	}, [session.vendorId, fetchVendorProducts]);
 
 	const products = storeProducts;
 

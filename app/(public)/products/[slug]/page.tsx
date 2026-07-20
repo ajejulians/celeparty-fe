@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Minus, Plus } from "lucide-react";
+import { Calendar, Minus, Plus, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,10 @@ import { toast } from "sonner";
 import { StatusBadge } from "../../../../components/feedback/StatusBadge";
 import { EscrowBreakdown } from "../../../../components/payment/EscrowBreakdown";
 import { Button } from "../../../../components/ui/button";
-import { products } from "../../../../lib/data";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getProductByDocumentId } from "@/lib/api/products";
+import { adaptStrapiProductToProduct } from "@/lib/adapters/product";
+import type { Product } from "@/lib/data";
 import { useSession } from "../../../../lib/session";
 import { formatCurrency, formatDate } from "../../../../lib/utils";
 import {
@@ -36,8 +39,10 @@ export default function ProductDetailPage({
 	const resolvedParams = use(params);
 	const router = useRouter();
 	const session = useSession();
-	const product = products.find((p) => p.slug === resolvedParams.slug);
 
+	const [product, setProduct] = useState<Product | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [fetchError, setFetchError] = useState(false);
 	const [selectedVariant, setSelectedVariant] = useState(0);
 	const [qty, setQty] = useState(1);
 	const [showForm, setShowForm] = useState(false);
@@ -56,12 +61,49 @@ export default function ProductDetailPage({
 	>({});
 
 	useEffect(() => {
+		let cancelled = false;
+		setIsLoading(true);
+		getProductByDocumentId(resolvedParams.slug)
+			.then((res) => {
+				if (cancelled) return;
+				setProduct(adaptStrapiProductToProduct(res.data));
+			})
+			.catch(() => {
+				if (!cancelled) setFetchError(true);
+			})
+			.finally(() => {
+				if (!cancelled) setIsLoading(false);
+			});
+		return () => { cancelled = true; };
+	}, [resolvedParams.slug]);
+
+	useEffect(() => {
 		if (product) {
 			document.title = `${product.name} | Celeparty`;
 		}
 	}, [product]);
 
-	if (!product) {
+	if (isLoading) {
+		return (
+			<div className="bg-neutral-50 min-h-screen">
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+					<Skeleton className="h-4 w-32 mb-6" />
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+						<Skeleton className="aspect-[4/3] rounded-xl" />
+						<div className="space-y-4">
+							<Skeleton className="h-4 w-24" />
+							<Skeleton className="h-8 w-3/4" />
+							<Skeleton className="h-4 w-1/2" />
+							<Skeleton className="h-10 w-1/3" />
+							<Skeleton className="h-20 w-full" />
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	if (fetchError || !product) {
 		return (
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
 				<h1 className="font-quick font-bold text-2xl text-neutral-900">

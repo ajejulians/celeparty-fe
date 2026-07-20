@@ -74,8 +74,7 @@ type ProductFormOutput = z.output<typeof productSchema>;
 export function ProductForm() {
 	const router = useRouter();
 	const session = useSession();
-	const addProduct = useVendorProductStore((s) => s.addProduct);
-	const [imageFile, setImageFile] = useState<File | null>(null);
+	const addProduct = useVendorProductStore((s) => s.addProduct);	const [imageFile, setImageFile] = useState<File | null>(null);
 
 	const form = useForm<ProductFormInput, any, ProductFormOutput>({
 		resolver: zodResolver(productSchema),
@@ -102,25 +101,27 @@ export function ProductForm() {
 
 	const onSubmit = async (data: ProductFormOutput) => {
 		try {
-			await new Promise((r) => setTimeout(r, 800));
-			addProduct({
-				name: data.name,
-				category: data.category,
-				city: data.city,
-				description: data.description,
-				priceFrom: data.priceFrom,
-				stock: data.stock,
-				totalStock: data.totalStock,
-				rentalUnit: data.rentalUnit,
-				isNegotiable: data.isNegotiable,
-				isActive: true,
-				escrow: data.isEscrowEnabled,
-				status: data.isEscrowEnabled ? "escrow_badge" : "active",
-				imageUrl: imageFile ? URL.createObjectURL(imageFile) : "",
-				variants: data.variants.map((v) => ({ name: v.name, price: v.price })),
-				vendorName: session.vendorName || "Vendor",
-				vendorId: session.vendorId || "unknown",
-			});
+			await addProduct(
+				{
+					name: data.name,
+					category: data.category,
+					city: data.city,
+					description: data.description,
+					priceFrom: data.priceFrom,
+					stock: data.stock,
+					totalStock: data.totalStock,
+					rentalUnit: data.rentalUnit,
+					isNegotiable: data.isNegotiable,
+					isActive: true,
+					escrow: data.isEscrowEnabled,
+					status: data.isEscrowEnabled ? "escrow_badge" : "active",
+					imageUrl: imageFile ? URL.createObjectURL(imageFile) : "",
+					variants: data.variants.map((v) => ({ name: v.name, price: v.price })),
+					vendorName: session.vendorName || "Vendor",
+					vendorId: session.vendorId || "unknown",
+				},
+				imageFile,
+			);
 			toast.success("Produk berhasil ditambahkan!");
 			router.push("/user/vendor/products");
 		} catch {

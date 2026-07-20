@@ -6,25 +6,21 @@ import {
 	Ticket,
 } from "lucide-react";
 import Link from "next/link";
-import { StatusBadge } from "@/components/feedback/StatusBadge";
-import { EscrowBreakdown } from "@/components/payment/EscrowBreakdown";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getOrderById, getProductBySlug } from "@/lib/checkout-data";
+import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface SuccessPageProps {
-	searchParams: Promise<{ order?: string }>;
+	searchParams: Promise<{ order?: string; order_id?: string }>;
 }
 
 export default async function CheckoutSuccessPage({
 	searchParams,
 }: SuccessPageProps) {
 	const resolvedSearchParams = await searchParams;
-	const orderId = resolvedSearchParams.order ?? "";
-	const order = getOrderById(orderId);
+	const orderId = resolvedSearchParams.order || resolvedSearchParams.order_id || "";
 
-	if (!order) {
+	if (!orderId) {
 		return (
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
 				<h1 className="font-quick font-bold text-2xl text-neutral-900">
@@ -43,13 +39,10 @@ export default async function CheckoutSuccessPage({
 		);
 	}
 
-	const product = getProductBySlug(order.productSlug);
-	const isEscrow = product?.status === "escrow_badge";
-
 	return (
 		<div className="min-h-screen bg-neutral-50">
 			<div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-				<div className="text-center mb-8 animate-fade-in motion-reduce:animate-none">
+				<div className="text-center mb-8">
 					<div className="w-16 h-16 rounded-full bg-status-success/10 flex items-center justify-center mx-auto mb-4">
 						<CheckCircle2 className="w-8 h-8 text-status-success" />
 					</div>
@@ -62,11 +55,10 @@ export default async function CheckoutSuccessPage({
 					</p>
 				</div>
 
-				<Card className="animate-slide-up motion-reduce:animate-none">
+				<Card>
 					<CardHeader className="pb-4">
 						<div className="flex items-center justify-between">
 							<CardTitle>Detail Pesanan</CardTitle>
-							<StatusBadge status={order.paymentStatus} />
 						</div>
 					</CardHeader>
 					<CardContent className="space-y-4">
@@ -76,66 +68,13 @@ export default async function CheckoutSuccessPage({
 									No. Order
 								</p>
 								<p className="font-mono font-semibold text-sm text-neutral-900">
-									{order.orderId}
-								</p>
-							</div>
-							<div>
-								<p className="text-xs font-sans text-neutral-500 mb-0.5">
-									Barcode
-								</p>
-								<p className="font-mono font-semibold text-sm text-neutral-900">
-									{order.barcode}
+									{orderId}
 								</p>
 							</div>
 						</div>
-
-						<div className="flex items-start gap-3">
-							<div className="w-14 h-14 rounded-lg bg-neutral-100 shrink-0" />
-							<div className="min-w-0">
-								<h4 className="font-quick font-semibold text-neutral-900">
-									{order.product}
-								</h4>
-								<p className="text-sm font-sans text-neutral-500">
-									{order.variant} &times; {order.qty}
-								</p>
-								<div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs font-sans text-neutral-500">
-									<span className="flex items-center gap-1">
-										<Calendar className="w-3.5 h-3.5" />
-										{formatDate(order.eventDate)}
-									</span>
-									<span className="flex items-center gap-1">
-										<Ticket className="w-3.5 h-3.5" />
-										{order.qty} Tiket
-									</span>
-								</div>
-							</div>
-						</div>
-
-						<hr className="border-neutral-100" />
-
-						{isEscrow ? (
-							<EscrowBreakdown totalPrice={order.total} />
-						) : (
-							<div className="flex justify-between items-center">
-								<span className="font-quick font-semibold text-neutral-900">
-									Total Dibayar
-								</span>
-								<span className="font-quick font-bold text-xl text-c-blue">
-									{formatCurrency(order.total)}
-								</span>
-							</div>
-						)}
 
 						<div className="bg-c-blue-50 border border-c-blue-100 rounded-xl p-4">
 							<p className="text-xs font-sans text-c-blue">
-								<strong>Status Vendor:</strong>{" "}
-								{order.vendorStatus === "pending"
-									? "Menunggu konfirmasi vendor"
-									: order.vendorStatus === "approved"
-										? "Dikonfirmasi"
-										: "Ditolak"}
-							</p>
-							<p className="text-xs font-sans text-c-blue mt-1">
 								E-ticket akan dikirim setelah vendor mengkonfirmasi pesanan
 								Anda.
 							</p>

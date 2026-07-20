@@ -84,7 +84,7 @@ export function EditProductDialog({
 }: EditProductDialogProps) {
 	const editingProduct = useVendorProductStore((s) => s.editingProduct);
 	const closeEditModal = useVendorProductStore((s) => s.closeEditModal);
-	const updateProduct = useVendorProductStore((s) => s.updateProduct);
+	const updateProductLocal = useVendorProductStore((s) => s.updateProductLocal);
 
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [isImageCleared, setIsImageCleared] = useState(false);
@@ -137,25 +137,20 @@ export function EditProductDialog({
 		try {
 			await new Promise((r) => setTimeout(r, 800));
 
-			let newImageUrl = editingProduct.imageUrl;
-			if (isImageCleared) {
-				newImageUrl = "";
-			} else if (imageFile) {
-				newImageUrl = URL.createObjectURL(imageFile);
-			}
-
-			updateProduct(editingProduct.slug, {
-				name: data.name,
-				category: data.category,
-				priceFrom: Number(data.priceFrom),
-				stock: Number(dynamicStock),
-				totalStock: Number(data.totalStock),
-				rentalUnit: data.rentalUnit,
-				description: data.description,
-				city: data.city,
-				status: data.status,
-				imageUrl: newImageUrl,
-			});
+			updateProductLocal(
+				editingProduct.slug,
+				{
+					name: data.name,
+					category: data.category,
+					priceFrom: Number(data.priceFrom),
+					totalStock: Number(data.totalStock),
+					rentalUnit: data.rentalUnit,
+					description: data.description,
+					city: data.city,
+					status: data.status,
+				},
+				imageFile || undefined,
+			);
 			toast.success("Produk berhasil diperbarui.");
 			handleClose();
 		} catch {

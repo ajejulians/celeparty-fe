@@ -1,34 +1,16 @@
 import { MapPin, ShieldCheck } from "lucide-react";
 import { EscrowBreakdown } from "@/components/payment/EscrowBreakdown";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getProductBySlug } from "@/lib/checkout-data";
+import type { Product } from "@/lib/data";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface OrderSummaryProps {
-	productSlug: string;
+	product: Product;
 	variantIndex: number;
 	qty: number;
 }
 
-export function OrderSummary({
-	productSlug,
-	variantIndex,
-	qty,
-}: OrderSummaryProps) {
-	const product = getProductBySlug(productSlug);
-
-	if (!product) {
-		return (
-			<Card>
-				<CardContent className="p-6">
-					<p className="font-sans text-sm text-neutral-500">
-						Produk tidak ditemukan.
-					</p>
-				</CardContent>
-			</Card>
-		);
-	}
-
+export function OrderSummary({ product, variantIndex, qty }: OrderSummaryProps) {
 	const variant = product.variants[variantIndex];
 	if (!variant) {
 		return (

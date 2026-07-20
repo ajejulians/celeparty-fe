@@ -29,19 +29,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { TicketCard } from "@/components/product/TicketCard";
 import { Button } from "@/components/ui/button";
-import { products } from "@/lib/data";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getProducts } from "@/lib/api/products";
+import { adaptStrapiProductToProduct } from "@/lib/adapters/product";
 import { useSession } from "@/lib/session";
-
-const uniqueVendors = Array.from(
-	new Map(
-		products.map((p) => [p.vendorName, { name: p.vendorName, city: p.city }]),
-	).values(),
-);
-
-const vendorProductCounts = uniqueVendors.map((v) => ({
-	...v,
-	count: products.filter((p) => p.vendorName === v.name).length,
-}));
+import type { Product } from "@/lib/data";
 
 function FadeInSection({
 	children,
@@ -132,12 +124,40 @@ export default function HomePage() {
 		session.role !== "admin";
 
 	const [currentBgIndex, setCurrentBgIndex] = useState(0);
+	const [homeProducts, setHomeProducts] = useState<Product[]>([]);
+	const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+
+	const uniqueVendors = Array.from(
+		new Map(
+			homeProducts.map((p) => [p.vendorName, { name: p.vendorName, city: p.city }]),
+		).values(),
+	);
+
+	const vendorProductCounts = uniqueVendors.map((v) => ({
+		...v,
+		count: homeProducts.filter((p) => p.vendorName === v.name).length,
+	}));
 
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setCurrentBgIndex((prev) => (prev + 1) % heroBgImages.length);
 		}, 5000);
 		return () => clearInterval(interval);
+	}, []);
+
+	useEffect(() => {
+		let cancelled = false;
+		setIsLoadingProducts(true);
+		getProducts({ pageSize: 4 })
+			.then((res) => {
+				if (cancelled) return;
+				setHomeProducts(res.data.map(adaptStrapiProductToProduct));
+			})
+			.catch(() => {})
+			.finally(() => {
+				if (!cancelled) setIsLoadingProducts(false);
+			});
+		return () => { cancelled = true; };
 	}, []);
 
 	return (
@@ -527,18 +547,31 @@ export default function HomePage() {
 						</div>
 					</FadeInSection>
 
-					<StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-						{products.slice(0, 4).map((product, idx) => (
-							<StaggerItem key={product.slug}>
-								<div className="group rounded-3xl overflow-hidden border border-neutral-100 hover:shadow-2xl transition-all duration-300">
-									<TicketCard
-										product={product}
-										variant="landing"
-										priority={idx === 0}
-									/>
-								</div>
-							</StaggerItem>
-						))}
+				<StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+					{isLoadingProducts
+						? Array.from({ length: 4 }).map((_, i) => (
+								<StaggerItem key={`skeleton-${i}`}>
+									<div className="rounded-3xl overflow-hidden border border-neutral-100">
+										<Skeleton className="aspect-[4/3] rounded-none" />
+										<div className="p-4 space-y-3">
+											<Skeleton className="h-3 w-24" />
+											<Skeleton className="h-5 w-full" />
+											<Skeleton className="h-5 w-3/4" />
+										</div>
+									</div>
+								</StaggerItem>
+							))
+						: homeProducts.slice(0, 4).map((product, idx) => (
+								<StaggerItem key={product.slug}>
+									<div className="group rounded-3xl overflow-hidden border border-neutral-100 hover:shadow-2xl transition-all duration-300">
+										<TicketCard
+											product={product}
+											variant="landing"
+											priority={idx === 0}
+										/>
+									</div>
+								</StaggerItem>
+							))}
 					</StaggerChildren>
 				</div>
 			</section>

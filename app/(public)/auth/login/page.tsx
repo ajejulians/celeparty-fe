@@ -186,6 +186,42 @@ export default function LoginPage() {
 					</form>
 
 					<div className="mt-6 pt-5 border-t border-neutral-100 text-center">
+						<p className="text-xs font-sans text-neutral-400 mb-2 font-medium">
+							Demo Quick Login (Klik untuk masuk otomatis):
+						</p>
+						<div className="grid grid-cols-3 gap-2 mb-4">
+							<button
+								type="button"
+								onClick={() => {
+									setEmail("customer@celeparty.com");
+									setPassword("123456");
+								}}
+								className="text-xs font-sans font-semibold py-2 px-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-lg transition-colors"
+							>
+								Customer
+							</button>
+							<button
+								type="button"
+								onClick={() => {
+									setEmail("vendor@celeparty.com");
+									setPassword("123456");
+								}}
+								className="text-xs font-sans font-semibold py-2 px-2 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-lg transition-colors border border-amber-200"
+							>
+								Vendor
+							</button>
+							<button
+								type="button"
+								onClick={() => {
+									setEmail("admin@celeparty.com");
+									setPassword("123456");
+								}}
+								className="text-xs font-sans font-semibold py-2 px-2 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-lg transition-colors border border-purple-200"
+							>
+								Admin
+							</button>
+						</div>
+
 						<p className="text-sm font-sans text-neutral-500">
 							Belum punya akun?{" "}
 							<Link
@@ -201,3 +237,4 @@ export default function LoginPage() {
 		</div>
 	);
 }
+

@@ -10,21 +10,30 @@ import { PaymentSimulator } from "@/components/checkout/PaymentSimulator";
 import { ProgressSteps } from "@/components/checkout/ProgressSteps";
 import { RecipientForm } from "@/components/ticket/RecipientForm";
 import { Button } from "@/components/ui/button";
-import { createOrder, getProductBySlug } from "@/lib/checkout-data";
+import { createTransaction } from "@/lib/api/transactions";
+import { generateOrderId } from "@/lib/checkout-data";
+import type { Product } from "@/lib/data";
 import { type RecipientFormData, recipientSchema } from "@/lib/validators";
 
 interface CheckoutFormWrapperProps {
+	product: Product;
 	productSlug: string;
 	variantIndex: number;
 	qty: number;
+	totalPrice: number;
+	variant: { name: string; price: number };
 }
 
 export function CheckoutFormWrapper({
+	product,
 	productSlug,
 	variantIndex,
 	qty,
+	totalPrice,
+	variant,
 }: CheckoutFormWrapperProps) {
 	const router = useRouter();
+
 	const [recipients, setRecipients] = useState<Partial<RecipientFormData>[]>(
 		() =>
 			Array.from({ length: qty }, () => ({
@@ -41,9 +50,6 @@ export function CheckoutFormWrapper({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [showPayment, setShowPayment] = useState(false);
 	const [currentStep, setCurrentStep] = useState(0);
-
-	const product = getProductBySlug(productSlug);
-	const variant = product?.variants[variantIndex];
 
 	const updateRecipient = useCallback(
 		(index: number, data: Partial<RecipientFormData>) => {
@@ -69,8 +75,9 @@ export function CheckoutFormWrapper({
 			const result = recipientSchema.safeParse(r);
 			if (!result.success) {
 				isValid = false;
-				const fieldErrors: Partial<Record<keyof RecipientFormData, string>> =
-					{};
+				const fieldErrors: Partial<
+					Record<keyof RecipientFormData, string>
+				> = {};
 				result.error.issues.forEach((issue) => {
 					const field = issue.path[0] as keyof RecipientFormData;
 					fieldErrors[field] = issue.message;
@@ -85,9 +92,43 @@ export function CheckoutFormWrapper({
 		return isValid;
 	};
 
+	const handlePaymentSuccess = async () => {
+		const validRecipients = recipients as RecipientFormData[];
+		setIsSubmitting(true);
+
+		try {
+			const orderId = generateOrderId(product.date);
+			const res = await createTransaction({
+				product_id: productSlug,
+				product_name: product.name,
+				variant_id: String(variantIndex),
+				variant: variant.name,
+				price: String(variant.price),
+				quantity: String(qty),
+				customer_name: validRecipients[0]?.name ?? "",
+				telp: validRecipients[0]?.whatsapp ?? "",
+				total_price: String(totalPrice),
+				event_date: product.date,
+				event_type: product.category,
+				note: "",
+			});
+
+			setIsSubmitting(false);
+			setShowPayment(false);
+			setCurrentStep(2);
+			toast.success("Pesanan berhasil dibuat!");
+			router.push(
+				`/checkout/success?order_id=${res.data.order_id || orderId}`,
+			);
+		} catch {
+			toast.error("Gagal membuat pesanan. Silakan coba lagi.");
+			setIsSubmitting(false);
+			setShowPayment(false);
+		}
+	};
+
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-
 		if (isSubmitting) return;
 
 		if (!validateAll()) {
@@ -98,48 +139,12 @@ export function CheckoutFormWrapper({
 		setIsSubmitting(true);
 		setShowPayment(true);
 		setCurrentStep(1);
-	};
-
-	const handlePaymentSuccess = () => {
-		const validRecipients = recipients as RecipientFormData[];
-		const order = createOrder(productSlug, variantIndex, qty, validRecipients);
-
-		if (!order) {
-			toast.error("Gagal membuat pesanan. Silakan coba lagi.");
-			setIsSubmitting(false);
-			setShowPayment(false);
-			return;
-		}
-
 		setIsSubmitting(false);
-		setShowPayment(false);
-		setCurrentStep(2);
-		toast.success("Pesanan berhasil dibuat!");
-		router.push(`/checkout/success?order=${order.orderId}`);
 	};
 
 	const handlePaymentClose = () => {
 		setShowPayment(false);
-		setIsSubmitting(false);
 	};
-
-	if (!product || !variant) {
-		return (
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-				<h1 className="font-quick font-bold text-2xl text-neutral-900">
-					Produk tidak ditemukan
-				</h1>
-				<Link
-					href="/products"
-					className="inline-block mt-4 text-c-blue font-quick font-semibold text-sm hover:underline"
-				>
-					&larr; Kembali ke Katalog
-				</Link>
-			</div>
-		);
-	}
-
-	const totalPrice = variant.price * qty;
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -181,7 +186,8 @@ export function CheckoutFormWrapper({
 
 					<div className="flex items-center gap-2 text-sm font-sans text-neutral-500">
 						<ShieldCheck className="w-4 h-4 text-status-success shrink-0" />
-						Data Anda aman dan hanya digunakan untuk keperluan verifikasi tiket.
+						Data Anda aman dan hanya digunakan untuk keperluan verifikasi
+						tiket.
 					</div>
 
 					<div className="flex gap-3 lg:hidden">
@@ -220,7 +226,7 @@ export function CheckoutFormWrapper({
 
 				<aside className="lg:col-span-1">
 					<OrderSummary
-						productSlug={productSlug}
+						product={product}
 						variantIndex={variantIndex}
 						qty={qty}
 					/>

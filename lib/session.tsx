@@ -108,20 +108,24 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		async function init() {
-			const token = document.cookie.match(/jwt_token=([^;]+)/)?.[1];
-			if (!token) {
-				setLoaded(true);
-				return;
-			}
+			const isAuthenticatedCookie = document.cookie.match(/is_authenticated=([^;]+)/)?.[1];
+			const roleCookie = document.cookie.match(/simulate_role=([^;]+)/)?.[1];
+			const vendorIdCookie = document.cookie.match(/vendor_id=([^;]+)/)?.[1];
 
-			try {
-				const user = await getMe();
-				setSession(userToSession(user));
-			} catch {
-				deleteCookie("jwt_token");
-				deleteCookie("simulate_role");
-				deleteCookie("vendor_id");
-				deleteCookie("is_authenticated");
+			if (isAuthenticatedCookie === "true") {
+				const role = (roleCookie as "admin" | "vendor" | "customer") || "customer";
+				const vendorId = vendorIdCookie || "v-001";
+				const name = role === "vendor" ? "Jakarta Audio Pro" : role === "admin" ? "Admin Celeparty" : "Customer Demo";
+				setSession({
+					role,
+					documentId: role === "vendor" ? vendorId : "user-001",
+					vendorId,
+					vendorName: name,
+					storeInitials: getInitials(name),
+					email: `${role}@celeparty.com`,
+					name,
+					isAuthenticated: true,
+				});
 			}
 			setLoaded(true);
 		}

@@ -2,9 +2,10 @@
 
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Search, SlidersHorizontal, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { TicketCard } from "@/components/product/TicketCard";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Select,
 	SelectContent,
@@ -12,42 +13,26 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { type Product, products } from "@/lib/data";
+import { getProducts, getCategories } from "@/lib/api/products";
+import { adaptStrapiProductToProduct } from "@/lib/adapters/product";
+import type { Product } from "@/lib/data";
 import { useFilterStore } from "@/lib/store";
 
-const categories = [
-	"Audio & Sound",
-	"Fotografi",
-	"Dekorasi",
-	"Catering",
-	"Entertainment",
-];
-
-const cities = ["Jakarta", "Bandung", "Surabaya", "Yogyakarta"];
-
 const priceRanges = [
-	{
-		label: "Di bawah Rp 5.000.000",
-		value: "under5m",
-		test: (p: Product) => p.priceFrom < 5_000_000,
-	},
-	{
-		label: "Rp 5.000.000 – Rp 10.000.000",
-		value: "5to10m",
-		test: (p: Product) => p.priceFrom >= 5_000_000 && p.priceFrom <= 10_000_000,
-	},
-	{
-		label: "Di atas Rp 10.000.000",
-		value: "above10m",
-		test: (p: Product) => p.priceFrom > 10_000_000,
-	},
+	{ label: "Di bawah Rp 5.000.000", value: "under5m", min: 0, max: 5_000_000 },
+	{ label: "Rp 5.000.000 – Rp 10.000.000", value: "5to10m", min: 5_000_000, max: 10_000_000 },
+	{ label: "Di atas Rp 10.000.000", value: "above10m", min: 10_000_001, max: undefined },
 ];
 
 const ITEMS_PER_PAGE = 8;
 
 export default function ProductsPage() {
-	const [isLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
+	const [products, setProducts] = useState<Product[]>([]);
+	const [totalCount, setTotalCount] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
+	const [apiCategories, setApiCategories] = useState<string[]>([]);
+	const [apiCities, setApiCities] = useState<string[]>([]);
 	const [sortBy, setSortBy] = useState("newest");
 	const [search, setSearch] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
@@ -68,47 +53,56 @@ export default function ProductsPage() {
 
 	const hasActiveFilters = activeFilterCount > 0 || search.length > 0;
 
-	const filteredProducts = useMemo(() => {
-		let result = [...products];
+	useEffect(() => {
+		let cancelled = false;
+		setIsLoading(true);
 
-		if (search) {
-			const q = search.toLowerCase();
-			result = result.filter(
-				(p) =>
-					p.name.toLowerCase().includes(q) ||
-					p.category.toLowerCase().includes(q) ||
-					p.city.toLowerCase().includes(q) ||
-					p.vendorName.toLowerCase().includes(q),
-			);
-		}
+		const range = priceRange ? priceRanges.find((r) => r.value === priceRange) : null;
+		const sort = sortBy === "price-low" ? "main_price:asc" : sortBy === "price-high" ? "main_price:desc" : undefined;
 
-		if (selectedCategories.length > 0) {
-			result = result.filter((p) => selectedCategories.includes(p.category));
-		}
+		getProducts({
+			category: selectedCategories.length === 1 ? selectedCategories[0] : undefined,
+			city: selectedCities.length === 1 ? selectedCities[0] : undefined,
+			priceMin: range?.min,
+			priceMax: range?.max,
+			search: search || undefined,
+			page: currentPage,
+			pageSize: ITEMS_PER_PAGE,
+			sort,
+		})
+			.then((res) => {
+				if (cancelled) return;
+				setProducts(res.data.map(adaptStrapiProductToProduct));
+				setTotalCount(res.meta.pagination.total);
+				setTotalPages(res.meta.pagination.pageCount);
+			})
+			.catch(() => {})
+			.finally(() => {
+				if (!cancelled) setIsLoading(false);
+			});
 
-		if (selectedCities.length > 0) {
-			result = result.filter((p) => selectedCities.includes(p.city));
-		}
+		return () => { cancelled = true; };
+	}, [selectedCategories, selectedCities, priceRange, sortBy, search, currentPage]);
 
-		if (priceRange) {
-			const range = priceRanges.find((r) => r.value === priceRange);
-			if (range) result = result.filter(range.test);
-		}
+	useEffect(() => {
+		getCategories()
+			.then((res) => {
+				const cats = res.data.map((c) => c.title);
+				setApiCategories(cats);
+			})
+			.catch(() => {});
+	}, []);
 
-		if (sortBy === "price-low") {
-			result.sort((a, b) => a.priceFrom - b.priceFrom);
-		} else if (sortBy === "price-high") {
-			result.sort((a, b) => b.priceFrom - a.priceFrom);
-		}
-
-		return result;
-	}, [selectedCategories, selectedCities, priceRange, sortBy, search]);
-
-	const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-	const paginatedProducts = filteredProducts.slice(
-		(currentPage - 1) * ITEMS_PER_PAGE,
-		currentPage * ITEMS_PER_PAGE,
-	);
+	useEffect(() => {
+		getProducts({ pageSize: 100 })
+			.then((res) => {
+				const cities = [...new Set(res.data
+					.map((p) => p.kota_event)
+					.filter(Boolean))].sort() as string[];
+				setApiCities(cities);
+			})
+			.catch(() => {});
+	}, []);
 
 	function FilterSidebar() {
 		return (
@@ -157,7 +151,7 @@ export default function ProductsPage() {
 						Kategori
 					</label>
 					<div className="space-y-2.5">
-						{categories.map((cat) => (
+						{apiCategories.map((cat) => (
 							<label
 								key={cat}
 								className="flex items-center gap-3 cursor-pointer group"
@@ -183,7 +177,7 @@ export default function ProductsPage() {
 						Wilayah
 					</label>
 					<div className="space-y-2.5">
-						{cities.map((city) => (
+						{apiCities.map((city) => (
 							<label
 								key={city}
 								className="flex items-center gap-3 cursor-pointer group"
@@ -312,7 +306,7 @@ export default function ProductsPage() {
 					<div className="flex-1 min-w-0">
 						<div className="flex items-center justify-between mb-6 flex-wrap gap-3">
 							<p className="text-sm font-sans text-neutral-500">
-								Menampilkan {filteredProducts.length} produk
+								Menampilkan {totalCount} produk
 							</p>
 							<Select value={sortBy} onValueChange={setSortBy}>
 								<SelectTrigger className="w-[220px] h-10 text-sm bg-white border border-neutral-200 text-neutral-700 focus:border-c-blue focus:ring-1 focus:ring-c-blue/15">
@@ -351,7 +345,7 @@ export default function ProductsPage() {
 							</div>
 						) : (
 							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-								{paginatedProducts.map((product) => (
+								{products.map((product) => (
 									<TicketCard
 										key={product.slug}
 										product={product}
@@ -361,7 +355,7 @@ export default function ProductsPage() {
 							</div>
 						)}
 
-						{filteredProducts.length === 0 && !isLoading && (
+						{products.length === 0 && !isLoading && (
 							<div className="flex flex-col items-center justify-center py-20 text-center">
 								<div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
 									<Search size={32} className="text-neutral-400" />
